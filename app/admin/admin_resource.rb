@@ -9,7 +9,7 @@ module AdminResource
 
       controller do
         def policy(subject = nil)
-          Pundit.policy!(current_user, subject || resource_class)
+          ApplicationPolicy.get(current_user, subject || resource_class)
         end
 
         def can?(action, subject)

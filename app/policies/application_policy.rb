@@ -1,13 +1,20 @@
 class ApplicationPolicy
   attr_reader :user, :record
 
+  def self.get(user, subject)
+    Pundit.policy(user, subject) ||
+    ApplicationPolicy.new(user, subject)
+  end
+
   def initialize(user, record)
     @user = user
     @record = record
   end
 
   def permitted_params
-    @_permitted_params ||= (user.admin? ? @record.class.attribute_names.map(&:to_sym) : [])
+    return @_permitted_params unless @_permitted_params.nil?
+    klass = @record.respond_to?(:attribute_names) ? @record : @record.class
+    @_permitted_params ||= (user.admin? ? klass.attribute_names.map(&:to_sym) : [])
   end
 
   def permitted_param?(param)
