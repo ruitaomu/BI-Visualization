@@ -12,10 +12,6 @@ gem 'therubyracer', platforms: :ruby
 gem 'devise'
 gem 'activeadmin', github: 'activeadmin'
 gem 'pundit'
-gem 'slim-rails'
-gem 'draper'
-
-gem 'dotenv'
 
 group :development, :test do
   gem 'byebug'
@@ -24,4 +20,5 @@ end
 
 group :development do
   gem 'quiet_assets'
+  gem 'meta_request'
 end
