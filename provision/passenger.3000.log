@@ -1,0 +1,30 @@
+[ 2015-03-30 15:51:23.5606 28458/0x7fff76bdc300 age/Wat/Main.cpp:1264 ]: Starting PassengerAgent watchdog...
+[ 2015-03-30 15:51:23.5830 28460/0x7fff76bdc300 age/Hel/Main.cpp:891 ]: Starting PassengerAgent server...
+[ 2015-03-30 15:51:23.5852 28460/0x7fff76bdc300 age/Hel/Main.cpp:234 ]: PassengerAgent server running in multi-application mode.
+[ 2015-03-30 15:51:23.5987 28460/0x7fff76bdc300 age/Hel/Main.cpp:645 ]: PassengerAgent server online, PID 28460
+[ 2015-03-30 15:51:23.6069 28462/0x7fff76bdc300 age/Log/Main.cpp:439 ]: Starting PassengerAgent logger...
+[ 2015-03-30 15:51:23.6102 28462/0x7fff76bdc300 age/Log/Main.cpp:320 ]: PassengerAgent logger online, PID 28462
+2015/03/30 15:51:25 [error] 28465#0: *4 "/Users/ivan/work/gigster/brain-intelligence/provision/public/index.html" is not found (2: No such file or directory), client: 127.0.0.1, server: _, request: "HEAD / HTTP/1.1", host: "0.0.0.0"
+2015/03/30 15:51:28 [error] 28465#0: *5 open() "/Users/ivan/work/gigster/brain-intelligence/provision/public/videos/new" failed (2: No such file or directory), client: 127.0.0.1, server: _, request: "GET /videos/new HTTP/1.1", host: "bi.dz:3000", referrer: "http://bi.dz:3000/videos"
+2015/03/30 15:51:28 [error] 28465#0: *5 open() "/Users/ivan/work/gigster/brain-intelligence/provision/public/favicon.ico" failed (2: No such file or directory), client: 127.0.0.1, server: _, request: "GET /favicon.ico HTTP/1.1", host: "bi.dz:3000"
+2015/03/30 15:51:32 [error] 28465#0: *5 open() "/Users/ivan/work/gigster/brain-intelligence/provision/public/videos/new" failed (2: No such file or directory), client: 127.0.0.1, server: _, request: "GET /videos/new HTTP/1.1", host: "bi.dz:3000", referrer: "http://bi.dz:3000/videos"
+2015/03/30 15:51:47 [error] 28465#0: *5 "/Users/ivan/work/gigster/brain-intelligence/provision/public/index.html" is not found (2: No such file or directory), client: 127.0.0.1, server: _, request: "GET / HTTP/1.1", host: "bi.dz:3000"
+2015/03/30 15:51:49 [error] 28465#0: *5 "/Users/ivan/work/gigster/brain-intelligence/provision/public/index.html" is not found (2: No such file or directory), client: 127.0.0.1, server: _, request: "GET / HTTP/1.1", host: "bi.dz:3000"
+
+[ 2015-03-30 15:52:07.4510 28462/0x10fceb000 age/Log/Main.cpp:346 ]: Signal received. Gracefully shutting down... (send signal 2 more time(s) to force shutdown)
+[ 2015-03-30 15:52:07.4510 28462/0x7fff76bdc300 age/Log/Main.cpp:408 ]: Received command to shutdown gracefully. Waiting until all clients have disconnected...
+
+[ 2015-03-30 15:52:07.4515 28460/0x10f3e4000 age/Hel/Main.cpp:455 ]: Signal received. Gracefully shutting down... (send signal 2 more time(s) to force shutdown)
+[ 2015-03-30 15:52:07.4515 28460/0x7fff76bdc300 age/Hel/Main.cpp:814 ]: Received command to shutdown gracefully. Waiting until all clients have disconnected...
+[ 2015-03-30 15:52:07.4519 28460/0x10f7fc000 Ser/Server.h:455 ]: [AdminServer] Shutdown finished
+[ 2015-03-30 15:52:07.4519 28462/0x10fceb000 Ser/Server.h:455 ]: [LoggerAdminServer] Shutdown finished
+[ 2015-03-30 15:52:07.4519 28460/0x10f6f6000 Ser/Server.h:455 ]: [ServerThr.7] Shutdown finished
+[ 2015-03-30 15:52:07.4518 28460/0x10f467000 Ser/Server.h:455 ]: [ServerThr.2] Shutdown finished
+[ 2015-03-30 15:52:07.4519 28460/0x10f779000 Ser/Server.h:455 ]: [ServerThr.8] Shutdown finished
+[ 2015-03-30 15:52:07.4518 28460/0x10f3e4000 Ser/Server.h:455 ]: [ServerThr.1] Shutdown finished
+[ 2015-03-30 15:52:07.4518 28460/0x10f5f0000 Ser/Server.h:455 ]: [ServerThr.5] Shutdown finished
+[ 2015-03-30 15:52:07.4518 28460/0x10f673000 Ser/Server.h:455 ]: [ServerThr.6] Shutdown finished
+[ 2015-03-30 15:52:07.4518 28460/0x10f4ea000 Ser/Server.h:455 ]: [ServerThr.3] Shutdown finished
+[ 2015-03-30 15:52:07.4518 28460/0x10f56d000 Ser/Server.h:455 ]: [ServerThr.4] Shutdown finished
+[ 2015-03-30 15:52:07.4530 28462/0x7fff76bdc300 age/Log/Main.cpp:433 ]: PassengerAgent logger shutdown finished
+[ 2015-03-30 15:52:07.4670 28460/0x7fff76bdc300 age/Hel/Main.cpp:876 ]: PassengerAgent server shutdown finished

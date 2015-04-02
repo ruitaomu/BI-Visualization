@@ -1,0 +1,35 @@
+- name: node | apt repository
+  apt_repository: repo=ppa:chris-lea/node.js
+  tags: app
+
+- name: node | install
+  apt: pkg={{ item }}
+  with_items:
+    - nodejs
+  tags: app
+
+- name: node | bower
+  npm: name=bower global=yes production=yes
+  tags: app
+
+- name: prerequisites
+  apt: pkg=imagemagick
+  tags: app
+
+- name: configure vhost
+  template: src=site.conf dest=/opt/nginx/conf/sites-available/{{ app_name }}
+  register: site_configuration
+  tags: app
+
+- name: enable site
+  file: path=/opt/nginx/conf/sites-enabled/{{ app_name }} src=/opt/nginx/conf/sites-available/{{ app_name }} state=link validate='nginx -t'
+  tags: app
+
+- name: configure logrotate
+  template: src=logrotate dest=/etc/logrotate.d/{{ app_name }}
+  tags: app
+
+- name: reload web server
+  service: name=nginx state=restarted
+  when: site_configuration.changed
+  tags: app

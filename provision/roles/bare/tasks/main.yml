@@ -1,0 +1,26 @@
+- name: system | create user
+  user: home=/home/{{ user }} name={{ user }} state=present shell=/bin/bash password={{ user_password }}
+
+- name: system | configure sudo
+  template: src=sudoers dest=/etc/sudoers validate='visudo -cf %s'
+
+- name: system | disable root ssh login
+  lineinfile: dest=/etc/ssh/sshd_config regexp='^PermitRootLogin' line='PermitRootLogin no'
+
+- name: system | disable challenge response authentication
+  lineinfile: dest=/etc/ssh/sshd_config regexp='^ChallengeResponseAuthentication' line='ChallengeResponseAuthentication no'
+
+- name: system | disable password authentication
+  lineinfile: dest=/etc/ssh/sshd_config regexp='^PasswordAuthentication' line='PasswordAuthentication no'
+
+- name: system | disable pam
+  lineinfile: dest=/etc/ssh/sshd_config regexp='^UsePAM' line='UsePAM no'
+
+- name: system | copy ssh key
+  authorized_key: user={{ user }} key="{{ lookup('file', ssh_key_file) }}"
+
+- name: system | permit ssh user environment
+  lineinfile: dest=/etc/ssh/sshd_config regexp='^PermitUserEnvironment' line='PermitUserEnvironment yes'
+
+- name: system | reload ssh
+  command: reload ssh

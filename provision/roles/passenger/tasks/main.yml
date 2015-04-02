@@ -1,0 +1,35 @@
+- name: get passenger tarball
+  unarchive: src=passenger-5.0.5.tar.gz dest=/opt creates=/opt/nginx/sbin/nginx
+  register: install_passenger
+
+- name: install script
+  template: src=compile.sh dest=/tmp/passenger-compile.sh mode=0777
+
+- name: run install script
+  command: /tmp/passenger-compile.sh
+  sudo: yes
+  when: install_passenger.changed
+
+- name: config directories
+  file: path=/opt/nginx/conf/{{ item }} state=directory
+  with_items:
+    - conf.d
+    - sites-enabled
+    - sites-available
+
+- name: config files
+  copy: src={{ item.src }} dest={{ item.dest }} mode={{ item.mode }}
+  with_items:
+    - { src: "nginx.conf", dest: "/opt/nginx/conf/nginx.conf", mode: 644 }
+    - { src: "nginx-initd", dest: "/etc/init.d/nginx", mode: 755 }
+
+- name: cleanup
+  file: path=/home/{{ user }}/passenger-compile.sh state=absent
+
+- name: start service
+  service: name=nginx state=started
+
+- name: open port
+  ufw: rule=allow port=80 proto=tcp
+  register: ufw_updated
+  tags: ufw
