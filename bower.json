@@ -1,0 +1,6 @@
+{
+  "name": "BrainIntelligence",
+  "dependencies": {
+    "jquery-file-upload": ""
+  }
+}

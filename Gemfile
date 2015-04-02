@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 gem 'rails', '4.2.1'
 gem 'pg'
+gem 'passenger'
 
 gem 'sass-rails', '~> 5.0'
 gem 'uglifier', '>= 1.3.0'
@@ -12,6 +13,7 @@ gem 'therubyracer', platforms: :ruby
 gem 'devise'
 gem 'activeadmin', github: 'activeadmin'
 gem 'pundit'
+gem 'paperclip'
 
 group :development, :test do
   gem 'byebug'
