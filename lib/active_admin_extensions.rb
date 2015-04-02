@@ -37,6 +37,20 @@ module ActiveAdminExtensions
       end
       alias_method_chain :column, :policy
     end
+
+    def action_icons
+      actions defaults: false, class: 'action-icons' do |record|
+        if can?(:edit, record)
+          item icon('pen'), [ :edit, record ], title: I18n.t('active_admin.edit')
+        end
+        if can?(:destroy, record)
+          item icon('trash_stroke'), record, title: I18n.t('active_admin.delete'), method: :delete, data: { confirm: I18n.t('active_admin.delete_confirmation') }
+        end
+        if block_given?
+          yield record
+        end
+      end
+    end
   end
 end
 

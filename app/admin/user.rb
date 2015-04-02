@@ -8,15 +8,17 @@ ActiveAdmin.register User do
 
   index do
     selectable_column
-    id_column
+    column :email do |user|
+      link_to user.email, user
+    end
     column :role do |user|
       status_tag user.role
     end
-    column :email
     column :current_sign_in_at
     column :sign_in_count
     column :created_at
-    actions
+
+    action_icons
   end
 
   show do
