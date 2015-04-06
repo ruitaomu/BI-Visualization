@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'rails', '4.2.1'
-gem 'dotenv', require: 'dotenv/rails-now'
+gem 'dotenv-rails', require: 'dotenv/rails-now'
 gem 'pg'
 gem 'passenger'
 
