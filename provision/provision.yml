@@ -4,8 +4,8 @@
   vars_files:
     - vars.yml
   roles:
-#  - { role: common }
-#  - { role: ruby }
+  - { role: common }
+  - { role: ruby }
   - { role: passenger }
   - { role: app_server }
-#  - { role: db_server }
+  - { role: db_server }

@@ -2,6 +2,7 @@
 user: deploy
 ssh_key_file: "{{ lookup('env', 'HOME') }}/.ssh/id_rsa.pub"
 
+app_name: brainintelligence
 timezone: 'America/Chicago'
 home_dir: /home/{{ user }}
-app_root: "{{ home_dir }}"
+app_root: "{{ home_dir }}/{{ app_name }}"

@@ -1,4 +1,4 @@
-/{{ app_root }}/{{ app_name }}/shared/log/* {
+/{{ app_root }}/{{ app_name }}/shared/log/*.log {
   daily
   rotate 7
   notifempty

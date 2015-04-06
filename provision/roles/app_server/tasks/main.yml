@@ -17,12 +17,12 @@
   tags: app
 
 - name: configure vhost
-  template: src=site.conf dest=/opt/nginx/conf/sites-available/{{ app_name }}
+  template: src=site.conf dest=/etc/nginx/sites-available/{{ app_name }}
   register: site_configuration
   tags: app
 
 - name: enable site
-  file: path=/opt/nginx/conf/sites-enabled/{{ app_name }} src=/opt/nginx/conf/sites-available/{{ app_name }} state=link validate='nginx -t'
+  file: path=/etc/nginx/sites-enabled/{{ app_name }} src=/etc/nginx/sites-available/{{ app_name }} state=link validate='nginx -t'
   tags: app
 
 - name: configure logrotate
