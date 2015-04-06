@@ -34,6 +34,13 @@ task setup: :environment do
   queue  %[echo "-----> Be sure to edit '#{deploy_to}/#{shared_path}/.env.production'."]
 end
 
+namespace :bower do
+  task :install do
+    queue "echo '-----> Installing Assets with Bower...'"
+    queue 'bower install > /dev/null'
+  end
+end
+
 desc 'Deploys the current version to the server.'
 task deploy: :environment do
   to :before_hook do
@@ -44,6 +51,7 @@ task deploy: :environment do
     invoke :'deploy:link_shared_paths'
     invoke :'bundle:install'
     invoke :'rails:db_migrate'
+    invoke :'bower:install'
     invoke :'rails:assets_precompile'
     invoke :'deploy:cleanup'
 
