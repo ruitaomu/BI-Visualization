@@ -19,3 +19,9 @@
 
 - name: disable default site
   file: path=/etc/nginx/sites-enabled/default state=absent
+
+- name: ufw | allow http
+  ufw: rule=allow port=80 protocol=tcp
+  register: ufw_updated
+  tags: ufw
+
