@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'rails', '4.2.1'
+gem 'dotenv', require: 'dotenv/rails-now'
 gem 'pg'
 gem 'passenger'
 
@@ -23,4 +24,5 @@ end
 group :development do
   gem 'quiet_assets'
   gem 'meta_request'
+  gem 'mina'
 end
