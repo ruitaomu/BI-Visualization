@@ -42,9 +42,9 @@ namespace :bower do
 end
 
 namespace :rails do
-  task :db_seed do
+  task db_seed: :environment do
     queue "echo '-----> Seeding the database'"
-    queue 'rake db:seed'
+    queue echo_cmd "cd #{deploy_to!}/#{current_path!} && #{rake} db:seed"
   end
 end
 

@@ -23,6 +23,4 @@ ansible-playbook -i hosts.ini [-l production] provision.yml
 ## Deployment
 
     mina setup # Edit files as instructed afterwards
-    mina
     mina deploy
-
