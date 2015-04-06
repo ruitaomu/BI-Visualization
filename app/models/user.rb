@@ -4,13 +4,26 @@ class User < ActiveRecord::Base
   devise :database_authenticatable,
          :recoverable, :rememberable, :trackable, :validatable
 
-  ROLES = %w(user admin)
+  has_and_belongs_to_many :roles
 
-  validates :role, inclusion: { in: ROLES }
+  def self.guest
+    new
+  end
 
-  ROLES.each do |role|
-    define_method "#{role}?" do
-      self.role == role
+  def has_role?(name)
+    roles.where(name: name).exists?
+  end
+
+  # Special omnipotent role
+  def is_admin?
+    has_role?(:admin)
+  end
+
+  def permitted_to?(action, resource)
+    return true if is_admin?
+    # No need for a scope query as there won't be that many roles on the DB
+    roles.detect do |role|
+      (role.persmissions[resource.name] || []).include?(action.to_s)
     end
   end
 end
