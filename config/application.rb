@@ -29,3 +29,4 @@ module BrainIntelligence
 end
 
 require 'active_admin_extensions'
+require_relative '../app/admin/admin_resource'
