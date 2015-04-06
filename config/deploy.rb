@@ -4,7 +4,7 @@ require 'mina/git'
 # require 'mina/rbenv'
 
 set :domain, 'bi.prd'
-set :deploy_to, '/home/deploy/bi'
+set :deploy_to, '/home/deploy/brainintelligence'
 set :repository, 'git@bitbucket.org:paxx/brainintelligence.git'
 set :branch, 'master'
 
@@ -36,8 +36,15 @@ end
 
 namespace :bower do
   task :install do
-    queue "echo '-----> Installing Assets with Bower...'"
+    queue "echo '-----> Installing Assets with Bower'"
     queue 'bower install > /dev/null'
+  end
+end
+
+namespace :rails do
+  task :db_seed do
+    queue "echo '-----> Seeding the database'"
+    queue 'rake db:seed'
   end
 end
 
@@ -51,6 +58,7 @@ task deploy: :environment do
     invoke :'deploy:link_shared_paths'
     invoke :'bundle:install'
     invoke :'rails:db_migrate'
+    invoke :'rails:db_seed'
     invoke :'bower:install'
     invoke :'rails:assets_precompile'
     invoke :'deploy:cleanup'
