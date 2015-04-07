@@ -43,7 +43,7 @@ ActiveAdmin.register User do
   form do |f|
     inputs do
       input :email
-      if current_user.id == user.id
+      if user.new_record? || current_user.id == user.id
         input :password
         input :password_confirmation
       end
