@@ -18,7 +18,7 @@ class ApplicationPolicy
   end
 
   def permitted_param?(param)
-    permitted_params.include?(param.to_sym)
+    user.is_admin? || permitted_params.include?(param.to_sym)
   end
 
   def visible_attributes

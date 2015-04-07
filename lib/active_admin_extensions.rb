@@ -4,7 +4,7 @@ module ActiveAdminExtensions
 
     included do
       def input_with_policy(*args)
-        if ApplicationPolicy.get(current_user, object).permitted_params.include?(args.first)
+        if ApplicationPolicy.get(current_user, object).permitted_param?(args.first)
           input_without_policy *args
         end
       end
