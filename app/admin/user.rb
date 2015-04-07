@@ -45,7 +45,7 @@ ActiveAdmin.register User do
       input :email
       input :password
       input :password_confirmation
-      input :role, collection: User::ROLES, include_blank: false
+      # input :role, collection: User::ROLES, include_blank: false
     end
 
     actions do
