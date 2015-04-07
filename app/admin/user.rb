@@ -43,9 +43,11 @@ ActiveAdmin.register User do
   form do |f|
     inputs do
       input :email
-      input :password
-      input :password_confirmation
-      # input :role, collection: User::ROLES, include_blank: false
+      if current_user.id == user.id
+        input :password
+        input :password_confirmation
+      end
+      input :roles, collection: Role.all
     end
 
     actions do

@@ -1,8 +1,8 @@
 class UserPolicy < ApplicationPolicy
   def permitted_params
     params = %i(email password password_confirmation)
-    return super + params if user.is_admin?
-    return [] unless record.id == user.id
+    return super + params + [{ role_ids: [] }] if user.is_admin?
+    return [] unless record_id == user.id
     params
   end
 
@@ -12,6 +12,6 @@ class UserPolicy < ApplicationPolicy
   end
 
   def update?
-    super || record.id == user.id
+    super || record_id == user.id
   end
 end

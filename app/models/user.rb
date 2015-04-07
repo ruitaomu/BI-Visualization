@@ -22,8 +22,8 @@ class User < ActiveRecord::Base
   def permitted_to?(action, resource)
     return true if is_admin?
     # No need for a scope query as there won't be that many roles on the DB
-    roles.detect do |role|
-      (role.persmissions[resource.name] || []).include?(action.to_s)
+    roles.pluck(:permissions).detect do |permission|
+      (permission[resource] || []).include?(action.to_s)
     end
   end
 end

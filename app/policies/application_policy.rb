@@ -76,4 +76,8 @@ private
   def record_class
     record.class == Class ? record : record.class
   end
+
+  def record_id
+    record.try(:id)
+  end
 end
