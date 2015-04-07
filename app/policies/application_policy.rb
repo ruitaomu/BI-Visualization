@@ -43,17 +43,17 @@ class ApplicationPolicy
   def create?
     user.permitted_to?(:create, record_class)
   end
-  alias_method :new?, :create?
+  def new?; create?; end
 
   def update?
     user.permitted_to?(:update, record_class)
   end
-  alias_method :edit?, :update?
+  def edit?; update?; end
 
   def destroy?
     user.permitted_to?(:destroy, record_class)
   end
-  alias_method :delete?, :destroy?
+  def delete?; destroy?; end
 
   def scope
     Pundit.policy_scope!(user, record.class)
