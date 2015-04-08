@@ -16,9 +16,12 @@ ActiveAdmin.register Customer do
 
   show title: :to_s do
     h3 'Projects'
-    table_for customer.projects do
+    table_for customer.projects, class: 'index_table' do
       column :name do |project|
         link_to_if can?(:show, project), project, project
+      end
+      column :testers do |project|
+        project.testers.count
       end
       column do |project|
         links = []
