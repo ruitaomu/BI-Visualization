@@ -31,7 +31,7 @@ module ActiveAdminExtensions
 
     included do
       def column_with_policy(*args, &block)
-        if ApplicationPolicy.get(current_user, @resource_class).visible_attribute?(args.first)
+        if ApplicationPolicy.get(current_user, @collection.klass).visible_attribute?(args.first)
           column_without_policy *args, &block
         end
       end

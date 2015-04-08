@@ -4,7 +4,7 @@ class Role < ActiveRecord::Base
 
   accepts_nested_attributes_for :permissions, allow_destroy: true
 
-  RESOURCES = %w(User Role Video)
+  RESOURCES = %w(User Role Video Customer Project Tester)
   ACTIONS = %w(create read update destroy)
 
   validates :name, presence: true

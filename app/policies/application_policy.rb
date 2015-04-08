@@ -13,8 +13,7 @@ class ApplicationPolicy
 
   def permitted_params
     return @_permitted_params unless @_permitted_params.nil?
-    klass = @record.respond_to?(:attribute_names) ? @record : @record.class
-    @_permitted_params ||= (user.is_admin? ? klass.attribute_names.map(&:to_sym) : [])
+    @_permitted_params ||= (user.is_admin? ? record_class.attribute_names.map(&:to_sym) : [])
   end
 
   def permitted_param?(param)
@@ -23,13 +22,12 @@ class ApplicationPolicy
 
   def visible_attributes
     return @_visible_attributes unless @_visible_attributes.nil?
-    klass = @record.respond_to?(:attribute_names) ? @record : @record.class
-    @_visible_attributes = user.is_admin? ? klass.attribute_names.map(&:to_sym) : []
+    @_visible_attributes = user.is_admin? ? record_class.attribute_names.map(&:to_sym) : []
   end
 
   def visible_attribute?(attribute)
     return true unless attribute.is_a?(Symbol)
-    visible_attributes.include?(attribute)
+    user.is_admin? || visible_attributes.include?(attribute)
   end
 
   def index?
