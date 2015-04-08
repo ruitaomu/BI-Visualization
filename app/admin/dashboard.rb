@@ -1,33 +1,31 @@
-ActiveAdmin.register_page "Dashboard" do
+ActiveAdmin.register_page 'Dashboard' do
+  menu priority: 1, label: I18n.t('active_admin.dashboard')
 
-  menu priority: 1, label: proc{ I18n.t("active_admin.dashboard") }
+  content title: I18n.t('active_admin.dashboard') do
+    columns do
+      column do
+        panel 'Customers' do
+          ul do
+            Customer.all.each do |customer|
+              li link_to(customer, customer)
+            end
+          end
+          para 'There are no customers yet.' unless Customer.any?
+          div link_to('Create Customer', new_customer_path, class: 'button')
+        end
+      end
 
-  content title: proc{ I18n.t("active_admin.dashboard") } do
-    div class: "blank_slate_container", id: "dashboard_default_message" do
-      span class: "blank_slate" do
-        span I18n.t("active_admin.dashboard_welcome.welcome")
-        small I18n.t("active_admin.dashboard_welcome.call_to_action")
+      column do
+        panel 'Projects' do
+          ul do
+            Project.all.each do |project|
+              li link_to(project, project)
+            end
+          end
+          para 'There are no projects yet.' unless Project.any?
+          div link_to('Create Project', new_project_path, class: 'button')
+        end
       end
     end
-
-    # Here is an example of a simple dashboard with columns and panels.
-    #
-    # columns do
-    #   column do
-    #     panel "Recent Posts" do
-    #       ul do
-    #         Post.recent(5).map do |post|
-    #           li link_to(post.title, admin_post_path(post))
-    #         end
-    #       end
-    #     end
-    #   end
-
-    #   column do
-    #     panel "Info" do
-    #       para "Welcome to ActiveAdmin."
-    #     end
-    #   end
-    # end
-  end # content
+  end
 end

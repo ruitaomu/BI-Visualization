@@ -1,6 +1,8 @@
 ActiveAdmin.register Role do
   include AdminResource
 
+  menu priority: 100, label: Role.model_name.human.pluralize
+
   config.filters = false
 
   index do

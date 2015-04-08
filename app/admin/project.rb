@@ -38,7 +38,7 @@ ActiveAdmin.register Project do
       end
     end
 
-    para 'There are no testers for this customer yet.' if project.testers.empty?
+    para 'There are no testers for this project yet.' if project.testers.empty?
 
     div do
       link_to 'Add Tester', new_tester_path(tester: { project_id: project }), class: 'button'
