@@ -11,8 +11,10 @@ ActiveAdmin.register User do
     column :email do |user|
       link_to user.email, user
     end
-    column :role do |user|
-      status_tag user.role
+    column :roles do |user|
+      user.roles.each do |role|
+        status_tag role.to_s
+      end
     end
     column :current_sign_in_at
     column :sign_in_count
@@ -25,8 +27,10 @@ ActiveAdmin.register User do
     attributes_table do
       row :id
       row :email
-      row :role do |user|
-        status_tag user.role
+      row :roles do |user|
+        user.roles.each do |role|
+          status_tag role.to_s
+        end
       end
       row :reset_password_sent_at
       row :remember_created_at
