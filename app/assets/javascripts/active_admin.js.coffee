@@ -1,11 +1,47 @@
 #= require active_admin/base
-#= require jquery-file-upload/js/jquery.iframe-transport
-#= require jquery-file-upload/js/jquery.fileupload
-#= require jquery-file-upload/js/jquery.fileupload-process
-#= require jquery-file-upload/js/jquery.fileupload-video
+#= require evaporatejs/evaporate
 
 $ ->
-  $('#video_file').fileupload
-    progressall: (e, data) ->
-      progress = parseInt(data.loaded / data.total * 100, 10) + '%'
-      $('#progress .bar').css(width: progress).html(progress)
+  $videoFile = $('#video_file')
+  $progress = $('#progress .bar')
+  $form = $('form.video')
+  $submit = $('#video_submit_action input')
+  $videoUrl = $('#video_url')
+  enableSubmit = -> $submit.removeClass('disabled').removeAttr('disabled')
+  disableSubmit = -> $submit.addClass('disabled').attr('disabled', true)
+
+  if $videoFile.length == 1
+    if $videoUrl.val().length > 0
+      $progress.css(width: '100%').html('100%')
+      enableSubmit()
+    else
+      disableSubmit()
+
+    uploader = new Evaporate
+      signerUrl: $videoFile.data('signer')
+      aws_key: $videoFile.data('s3Key')
+      aws_url: $videoFile.data('s3Host')
+      bucket: $videoFile.data('s3Bucket')
+    $videoFile.change (e) ->
+      file = e.target.files[0]
+      rand = Math.floor(1000 * Math.random())
+      $progress.css(width: '0').html('0%')
+      uploader.add
+        name: "#{$videoFile.data('prefix')}/#{file.name}"
+        file: file
+        notSignedHeadersAtInitiate:
+          'Cache-Control': 'max-age=3600'
+        xAmzHeadersAtInitiate:
+          'x-amz-acl': 'public-read'
+        beforeSigner: (xhr) ->
+          requestDate = (new Date()).toISOString()
+          xhr.setRequestHeader 'Request-Header', requestDate
+        progress: (progress) ->
+          progress = parseInt(progress * 100, 10) + '%'
+          $progress.css(width: progress).html(progress)
+        complete: (xhr) ->
+          $videoUrl.val xhr.responseURL.replace(/\?.+/, '')
+          enableSubmit()
+          $form.submit()
+
+        $videoFile.val('')

@@ -7,6 +7,9 @@
 # Ignore bundler config.
 /.bundle
 
+# Ignore custom dev config
+.env.development
+
 # Ignore all logfiles and tempfiles.
 /log/*
 !/log/.keep

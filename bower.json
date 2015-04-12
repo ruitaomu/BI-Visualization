@@ -1,6 +1,7 @@
 {
   "name": "BrainIntelligence",
   "dependencies": {
+    "evaporatejs": "",
     "jquery-file-upload": ""
   }
 }

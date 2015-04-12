@@ -1,5 +1,6 @@
 class Tester < ActiveRecord::Base
-  belongs_to :project
+  has_many :videos
+  has_many :projects, through: :videos
 
   validates :name, presence: true
 

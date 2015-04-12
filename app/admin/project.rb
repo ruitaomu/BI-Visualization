@@ -9,7 +9,7 @@ ActiveAdmin.register Project do
 
   index do
     selectable_column
-    column :name do |project|
+    column :video do |project|
       link_to_if can?(:show, project), project, project
     end
     column :customer, sortable: 'customers.name' do |project|
@@ -23,25 +23,26 @@ ActiveAdmin.register Project do
 
   show title: :to_s do
     h3 project.customer
-    table_for project.testers, class: 'index_table' do
-      column :name do |tester|
-        link_to_if can?(:show, tester), tester, tester
+    h4 'Videos'
+    table_for project.videos.includes(:tester), class: 'index_table' do
+      column :name do |video|
+        link_to_if can?(:show, video), video.tester, [ project, video ]
       end
-      column do |tester|
+      column do |video|
         links = []
-        links << link_to('Edit', [ :edit, tester ]) if can?(:edit, tester)
-        links << link_to('Delete',
-                         tester,
+        links << link_to('Edit', [ :edit, project, video ]) if can?(:edit, video)
+        links << link_to('Remove',
+                         [ project, video ],
                          method: :delete, data: { confirm: 'Are you sure?' }
-        ) if can?(:delete, tester)
+        ) if can?(:delete, video)
         links.join(' | ').html_safe
       end
     end
 
-    para 'There are no testers for this project yet.' if project.testers.empty?
+    para 'There are no videos for this project yet.' if project.videos.empty?
 
     div do
-      link_to 'Add Tester', new_tester_path(tester: { project_id: project }), class: 'button'
+      link_to 'Add Video', new_project_video_path(project), class: 'button'
     end
   end
 end

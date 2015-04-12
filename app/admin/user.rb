@@ -1,6 +1,8 @@
 ActiveAdmin.register User do
   include AdminResource
 
+  menu priority: 90
+
   filter :email
   filter :current_sign_in_at
   filter :sign_in_count
