@@ -5,7 +5,7 @@ require 'mina/git'
 
 set :domain, 'bi.prd'
 set :deploy_to, '/home/deploy/brainintelligence'
-set :repository, 'git@bitbucket.org:paxx/brainintelligence.git'
+set :repository, 'git@github.com:gigster-eng/eeg.git'
 set :branch, 'master'
 
 # Manually create these paths in shared/ (eg: shared/config/database.yml) in your server.
