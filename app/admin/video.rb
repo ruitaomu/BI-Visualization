@@ -38,7 +38,7 @@ ActiveAdmin.register Video do
     end
   end
 
-  show do
+  show title: -> (video) { video.tester.to_s } do
 
   end
 
