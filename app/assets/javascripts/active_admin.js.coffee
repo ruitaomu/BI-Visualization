@@ -1,6 +1,7 @@
 #= require active_admin/base
 #= require evaporatejs/evaporate
 #= require videojs/dist/video-js/video.dev
+#= require admin/videos
 
 $ ->
   $videoFile = $('#video_file')
