@@ -39,7 +39,15 @@ ActiveAdmin.register Video do
   end
 
   show title: -> (video) { video.tester.to_s } do
+    video id: "video-#{resource.id}",
+          class: 'video-js vjs-default-skin vjs-big-play-centered',
+          preload: 'auto',
+          width: '640',
+          height: '480',
+          'data-setup' => '{"controls": true, "controlBar": {"muteToggle": false}}' do
 
+      source src: resource.url, type: 'video/mp4'
+    end
   end
 
   form do |f|

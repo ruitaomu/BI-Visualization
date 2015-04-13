@@ -16,6 +16,8 @@
 //
 //   .status_tag { background: #6090DB; }
 
+@import "videojs/dist/video-js/video-js";
+
 #progress {
   margin: 5px 0 0 20%;
   box-sizing: border-box;
@@ -26,6 +28,14 @@
     background: #00cc00;
     width: 0%;
     text-align: center;
+  }
+}
+
+// Videos
+
+body.videos.show {
+  .video-js {
+    margin: 0 auto;
   }
 }
 
