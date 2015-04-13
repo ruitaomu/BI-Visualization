@@ -27,7 +27,6 @@ CORS Configuration (Properties > Permissions) and add the following:
     <CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
         <CORSRule>
             <AllowedOrigin>*</AllowedOrigin>
-            <AllowedMethod>PUT</AllowedMethod>
             <AllowedMethod>POST</AllowedMethod>
             <AllowedMethod>DELETE</AllowedMethod>
             <AllowedMethod>GET</AllowedMethod>
@@ -38,4 +37,3 @@ CORS Configuration (Properties > Permissions) and add the following:
 
 If using DreamObjects, just create a `cors.xml` file with the contents as above
 and upload it to the root of the bucket.
-
