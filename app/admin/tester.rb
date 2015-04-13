@@ -17,8 +17,23 @@ ActiveAdmin.register Tester do
       row :id
       row :name
       row :projects
+      Setting.tester_attributes.each do |attr|
+        row attr do |tester|
+          (tester.metadata || {})[attr]
+        end
+      end
       row :created_at
       row :updated_at
     end
+  end
+
+  form do |f|
+    inputs do
+      input :name
+      Setting.tester_attributes.each do |attr|
+        input :"metadata_#{attr}", label: attr.humanize
+      end
+    end
+    actions
   end
 end

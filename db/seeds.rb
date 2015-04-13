@@ -12,3 +12,7 @@ unless User.any?
                password_confirmation: 'password',
                roles: [Role.find_by(name: 'admin')])
 end
+
+unless Setting.any?
+  Setting.create!(name: 'tester_attributes', value: 'age, game_level, personality_type')
+end
