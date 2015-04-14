@@ -38,7 +38,7 @@ $ ->
       hours = "0#{hours}" if hours < 10
       minutes = "0#{minutes}" if minutes < 10
       seconds = "0#{seconds}" if seconds < 10
-      "#{hours}:#{minutes}:#{seconds}"
+      "#{hours}:#{minutes}:#{Math.round(seconds * 1000) / 1000}"
 
     extractSeconds = (string) ->
       p = string.split(':')
