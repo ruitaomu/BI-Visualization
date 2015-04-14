@@ -1,3 +1,10 @@
+Rails.application.config.after_initialize do
+  javascripts = []
+  javascripts << "//www.google.com/jsapi"
+  javascripts += ActiveAdmin.application.javascripts.to_a
+  ActiveAdmin.application.javascripts.replace javascripts
+end
+
 ActiveAdmin.setup do |config|
   # == Site Title
   #

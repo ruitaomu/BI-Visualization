@@ -2,6 +2,7 @@
 #= require evaporatejs/evaporate
 #= require videojs/dist/video-js/video.dev
 #= require admin/videos
+#= require chartkick
 
 $ ->
   $videoFile = $('#video_file')

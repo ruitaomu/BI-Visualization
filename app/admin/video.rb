@@ -48,6 +48,11 @@ ActiveAdmin.register Video do
 
       source src: resource.url, type: 'video/mp4'
     end
+    div render('dialog')
+    div class: 'chart', id: 'tag-chart', style: 'height: 500px', 'data-rows' =>
+                 [["New Game", 0,10_000],
+                   ["Died", 5000,13_000],
+                 ["End", 12000,15000]], tooltip: { trigger: 'selection' }
   end
 
   form do |f|

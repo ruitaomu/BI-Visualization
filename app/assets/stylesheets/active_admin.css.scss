@@ -35,7 +35,66 @@
 
 body.videos.show {
   .video-js {
-    margin: 0 auto;
+    margin: 0 auto 20px;
+  }
+}
+
+.vjs-control-bar {
+  .tag-button {
+    cursor: pointer;
+    &:after {
+      width: 100%;
+      height: 100%;
+      content: 'Tag';
+      line-height: 3em;
+    }
+    &.end:after {
+      content: 'End';
+    }
+    &:hover {
+      font-weight: bold;
+    }
+  }
+  button {
+    border-radius: 0;
+  }
+}
+
+.ui-dialog-titlebar button {
+  float: right;
+  border-radius: 2px;
+  cursor: pointer;
+  padding: 1px 6px;
+  margin: 0;
+}
+
+#dialog {
+  display: none;
+  form {
+    margin-bottom: 20px;
+    label {
+      display: inline-block;
+      width: 50px;
+    }
+    .field.tag, .field.duration {
+      input {
+        border: 0;
+        background: transparent;
+      }
+    }
+  }
+  .actions {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    button {
+      cursor: pointer;
+      text-shadow: none;
+      color: #eaeaea;
+    }
+    .delete {
+      background: linear-gradient(180deg, #900, #600);
+    }
   }
 }
 
