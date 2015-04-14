@@ -25,7 +25,7 @@ $ ->
     tagStart = 0
     tagButton.on 'click', ->
       if $tagButton.hasClass('end')
-        addRow tagStart, video.currentTime(0)
+        addRow tagStart, video.currentTime()
         $tagButton.removeClass('end')
       else
         tagStart = video.currentTime()
