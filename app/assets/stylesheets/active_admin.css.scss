@@ -103,6 +103,18 @@ body.videos.show {
   margin: 0;
 }
 
+.chart {
+  position: relative;
+  overflow: hidden;
+  &:before {
+    content: 'Loading chart...';
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    color: #999;
+  }
+}
+
 #tag-chart {
   height: 500px;
 }
@@ -141,6 +153,13 @@ body.videos.show {
       background: linear-gradient(180deg, #900, #600);
     }
   }
+}
+
+.tracking-line {
+  width: 2px;
+  background: black;
+  height: 100%;
+  opacity: 0.5;
 }
 
 // Hide ActiveAdmin notice
