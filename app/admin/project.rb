@@ -9,7 +9,7 @@ ActiveAdmin.register Project do
 
   index do
     selectable_column
-    column :video do |project|
+    column :project do |project|
       link_to_if can?(:show, project), project, project
     end
     column :customer, sortable: 'customers.name' do |project|
