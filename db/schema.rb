@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150413191044) do
+ActiveRecord::Schema.define(version: 20150414032359) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -64,6 +64,20 @@ ActiveRecord::Schema.define(version: 20150413191044) do
     t.string "name"
     t.string "value"
   end
+
+  create_table "tags", force: :cascade do |t|
+    t.integer  "video_id",   null: false
+    t.string   "name",       null: false
+    t.integer  "starts",     null: false
+    t.integer  "ends",       null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "tags", ["ends"], name: "index_tags_on_ends", using: :btree
+  add_index "tags", ["name"], name: "index_tags_on_name", using: :btree
+  add_index "tags", ["starts"], name: "index_tags_on_starts", using: :btree
+  add_index "tags", ["video_id"], name: "index_tags_on_video_id", using: :btree
 
   create_table "testers", force: :cascade do |t|
     t.string   "name"

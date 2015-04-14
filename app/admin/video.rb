@@ -12,6 +12,16 @@ ActiveAdmin.register Video do
       end
     end
 
+    def update
+      if request.xhr?
+        update! do |success, failure|
+          success.html { render nothing: true }
+        end
+      else
+        super
+      end
+    end
+
     def scoped_collection
       super.includes :project
     end
@@ -49,10 +59,10 @@ ActiveAdmin.register Video do
       source src: resource.url, type: 'video/mp4'
     end
     div render('dialog')
-    div class: 'chart', id: 'tag-chart', style: 'height: 500px', 'data-rows' =>
-                 [["New Game", 0,10_000],
-                   ["Died", 5000,13_000],
-                 ["End", 12000,15000]], tooltip: { trigger: 'selection' }
+    form_for [ resource.project, resource ], html: { class: 'update-tags' } do
+      button 'Save Video Tags'
+    end
+    div class: 'chart', id: 'tag-chart', 'data-rows' => resource.tags_for_chart
   end
 
   form do |f|
