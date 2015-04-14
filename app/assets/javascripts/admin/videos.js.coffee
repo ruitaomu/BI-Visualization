@@ -142,7 +142,8 @@ $ ->
       time = video.currentTime()
 
     $form = $('form.update-tags')
-    $('button', $form).click (e) ->
+    $btnSaveTags = $('button', $form)
+    $btnSaveTags.click (e) ->
       e.preventDefault()
       $('input.h', $form).remove()
       prefix = "<input class='h' type='hidden' name='video[tags_attributes]"
@@ -159,7 +160,18 @@ $ ->
         $form.append "#{prefix}[#{deleted}][id]]' value='#{deleted}'>"
         $form.append "#{prefix}[#{deleted}][_destroy]]' value='1'>"
 
+      $btnSaveTags.addClass 'processing'
+
       $.ajax
         type: 'PATCH'
         url: $form.attr('action')
         data: $form.serialize()
+        success: ->
+          $btnSaveTags.removeClass 'processing'
+          $btnSaveTags.addClass 'done'
+          setTimeout ->
+            $btnSaveTags.removeClass 'done'
+          , 1000
+        error: ->
+          $btnSaveTags.removeClass 'processing'
+          alert 'There was an unexpected error, please try again later.'

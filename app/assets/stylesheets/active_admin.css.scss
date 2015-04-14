@@ -43,6 +43,33 @@ body.videos.show {
     button {
       font-size: 1.2em;
       cursor: pointer;
+      position: relative;
+      &:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: -32px;
+        width: 28px;
+        height: 28px;
+        background: url('/assets/check-green.png') no-repeat;
+        display: none;
+      }
+      &:after {
+        content: '';
+        position: absolute;
+        right: -26px;
+        top: 5px;
+        height: 16px;
+        width: 16px;
+        background: url('/assets/throbber.gif') no-repeat;
+        display: none;
+      }
+      &.processing:after {
+        display: block;
+      }
+      &.done:before {
+        display: block;
+      }
     }
   }
 }
