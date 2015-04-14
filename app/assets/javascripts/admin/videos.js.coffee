@@ -16,6 +16,7 @@ $ ->
 
       $tracker = $("<div class='tracking-line'></div>")
       $guide = $("<div style='position:absolute;pointer-events:none;overflow:hidden'></div>")
+      $firstRowOverlay = $("<div style='position:absolute'></div>")
 
       drawChart = ->
         chart.draw table, chartOptions
@@ -34,6 +35,13 @@ $ ->
           .height rect.rb[1] - rect.lt[1]
           .appendTo 'body'
           .append $tracker
+        # This will be on top of the first row so the user
+        # is not able to click on it (the "Total" row)
+        $firstRowOverlay
+          .offset top: rect.lt[1], left: rect.lt[0]
+          .width rect.rb[0] - rect.lt[0]
+          .height leftTop.bottom - leftTop.top
+          .appendTo 'body'
 
         chartHeight = $('svg > g:first', $chart).get(0).getBoundingClientRect().height
         $chart.css height: "#{chartHeight + 30}px"
