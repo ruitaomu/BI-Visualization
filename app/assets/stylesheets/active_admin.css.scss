@@ -82,13 +82,19 @@ body.videos.show {
 
 #dialog {
   display: none;
+  padding-bottom: 40px;
   form {
-    margin-bottom: 20px;
     label {
       display: inline-block;
       width: 50px;
     }
-    .field.tag, .field.duration {
+    select {
+      margin-left: -5px;
+    }
+    .field.tag {
+      white-space: nowrap;
+    }
+    .field.duration {
       input {
         border: 0;
         background: transparent;
