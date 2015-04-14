@@ -64,7 +64,7 @@ $ ->
       row = chart.getSelection()[0].row
       dialogForRow row
 
-    addRow = ->
+    addRow = (tagStart, tagEnd) ->
       $dialog.data 'row', table.Lf.length # New
       table.addRows [[ '', 'new', tagStart * 1000, tagEnd * 1000 ]]
       dialogForRow $dialog.data('row')
