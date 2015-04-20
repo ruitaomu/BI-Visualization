@@ -16,6 +16,7 @@ gem 'activeadmin', github: 'activeadmin'
 gem 'pundit'
 gem 'paperclip'
 gem 'appsignal'
+gem 'non-stupid-digest-assets'
 
 group :development, :test do
   gem 'byebug'
