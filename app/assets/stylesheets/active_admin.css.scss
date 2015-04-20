@@ -107,7 +107,7 @@ body.videos.show {
   position: relative;
   overflow: hidden;
   &:before {
-    content: 'Loading chart...';
+    content: 'Loading chart (start the video if this takes too long)...';
     position: absolute;
     width: 100%;
     text-align: center;

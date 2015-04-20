@@ -1,5 +1,9 @@
 $ ->
   google.load 'visualization', '1.0', 'packages': [ 'timeline' ], callback: ->
+    loaded = false
+    $tracker = null
+    $guide = null
+
     loadTagChart = ->
       $chart = $('#tag-chart')
 
@@ -19,9 +23,10 @@ $ ->
       $firstRowOverlay = $("<div style='position:absolute'></div>")
 
       drawChart = ->
+        # Draw first to get new height
         chart.draw table, chartOptions
-        leftTop = $('svg > g > path:first', $chart).get(0).getBoundingClientRect()
-        right = $('svg > g:first > rect:last', $chart).get(0).getBoundingClientRect()
+        leftTop = $('svg:last > g > path:first', $chart).get(0).getBoundingClientRect()
+        right = $('svg:last > g:first > rect:last', $chart).get(0).getBoundingClientRect()
         offsetY = document.body.scrollTop
         offsetX = document.body.scrollLeft
         rect = {
@@ -43,7 +48,10 @@ $ ->
           .height leftTop.bottom - leftTop.top
           .appendTo 'body'
 
-        chartHeight = $('svg > g:first', $chart).get(0).getBoundingClientRect().height
+        chartHeight = $('svg:last > g:first', $chart).get(0).getBoundingClientRect().height
+        # Redraw because GCharts gets the height wrong the first time
+        $chart.css height: "#{chartHeight + 60}px"
+        chart.draw table, chartOptions
         $chart.css height: "#{chartHeight + 30}px"
 
       if ($chart.data('rows') || []).length > 0
@@ -175,11 +183,6 @@ $ ->
           updateRow()
           $dialog.dialog 'close'
 
-      video.on 'timeupdate', (e) ->
-        time = video.currentTime()
-        secsPerPixel = $guide.width() / video.duration()
-        $tracker.offset left: $guide.offset().left + time * secsPerPixel
-
       $form = $('form.update-tags')
       $btnSaveTags = $('button', $form)
       $btnSaveTags.click (e) ->
@@ -216,8 +219,15 @@ $ ->
             $btnSaveTags.removeClass 'processing'
             alert 'There was an unexpected error, please try again later.'
 
+      loaded = true
+
     $video = $('.video-js')
     id = $video.attr('id')
     video = videojs(id)
     video.on 'loadedmetadata', (e) ->
       loadTagChart()
+    video.on 'timeupdate', (e) ->
+      loadTagChart() unless loaded
+      time = video.currentTime()
+      secsPerPixel = $guide.width() / video.duration()
+      $tracker.offset left: $guide.offset().left + time * secsPerPixel
