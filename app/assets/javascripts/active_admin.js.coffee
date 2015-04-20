@@ -1,3 +1,4 @@
+#= require appsignal
 #= require active_admin/base
 #= require evaporatejs/evaporate
 #= require videojs/dist/video-js/video.dev

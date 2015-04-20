@@ -15,6 +15,7 @@ gem 'devise'
 gem 'activeadmin', github: 'activeadmin'
 gem 'pundit'
 gem 'paperclip'
+gem 'appsignal'
 
 group :development, :test do
   gem 'byebug'

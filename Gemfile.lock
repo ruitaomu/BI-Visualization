@@ -54,6 +54,9 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
+    appsignal (0.11.9)
+      rack
+      thread_safe
     arbre (1.0.3)
       activesupport (>= 3.0.0)
     arel (6.0.0)
@@ -231,6 +234,7 @@ PLATFORMS
 
 DEPENDENCIES
   activeadmin!
+  appsignal
   byebug
   coffee-rails (~> 4.1.0)
   devise
