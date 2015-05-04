@@ -23,7 +23,6 @@ ActiveAdmin.register Project do
 
   show title: :to_s do
     h3 project.customer
-    h4 'Videos'
     table_for project.videos.includes(:tester), class: 'index_table' do
       column :name do |video|
         link_to_if can?(:show, video), video.tester, [ project, video ]
@@ -42,7 +41,7 @@ ActiveAdmin.register Project do
     para 'There are no videos for this project yet.' if project.videos.empty?
 
     div do
-      link_to 'Add Video', new_project_video_path(project), class: 'button'
+      link_to 'Add Tester', new_project_video_path(project), class: 'button'
     end
   end
 end
