@@ -17,6 +17,8 @@ gem 'pundit'
 gem 'paperclip'
 gem 'appsignal'
 gem 'non-stupid-digest-assets'
+gem 'rubyXL'
+gem 'moving_average'
 
 group :development, :test do
   gem 'byebug'

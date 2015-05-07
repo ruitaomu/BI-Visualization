@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150414032359) do
+ActiveRecord::Schema.define(version: 20150506194430) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -37,11 +37,22 @@ ActiveRecord::Schema.define(version: 20150414032359) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "datafiles", force: :cascade do |t|
+    t.integer  "video_id",                    null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+    t.json     "metadata",       default: {}, null: false
+    t.integer  "moving_average", default: 50
+  end
+
+  add_index "datafiles", ["video_id"], name: "index_datafiles_on_video_id", using: :btree
+
   create_table "projects", force: :cascade do |t|
     t.integer  "customer_id"
     t.string   "name"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+    t.string   "type",        default: "", null: false
   end
 
   add_index "projects", ["customer_id"], name: "index_projects_on_customer_id", using: :btree
@@ -72,6 +83,7 @@ ActiveRecord::Schema.define(version: 20150414032359) do
     t.integer  "ends",       null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string   "group"
   end
 
   add_index "tags", ["ends"], name: "index_tags_on_ends", using: :btree

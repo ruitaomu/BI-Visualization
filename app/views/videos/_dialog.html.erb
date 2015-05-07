@@ -5,21 +5,25 @@
       <select tabindex="1"><%= options_from_collection_for_select(Tag.names(resource), :to_s, :to_s) %></select>
       or
       <input tabindex="2">
+    </div><br>
+    <div class="field group">
+      <label>Group:</label>
+      <input tabindex="3" class='autocomplete' data-prepopulate="<%= Tag.groups %>">
     </div>
     <div class="field duration">
       <label>Duration:</label><input disabled>
     </div>
     <div class="field start">
-      <label>Start:</label><input tabindex="3">
+      <label>Start:</label><input tabindex="4">
     </div>
     <div class="field end">
-      <label>End:</label><input tabindex="4">
+      <label>End:</label><input tabindex="5">
     </div>
   </form>
   <div class="actions">
     <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
       <div class="ui-dialog-buttonset">
-        <button tabindex="5" type="button" class="update ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button">
+        <button tabindex="6" type="button" class="update ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button">
           <span class="ui-button-text">Update</span>
         </button>
         <button type="button" class="delete ui-button ui-button-danger ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button">

@@ -1,18 +1,21 @@
 $ ->
-  google.load 'visualization', '1.0', 'packages': [ 'timeline' ], callback: ->
+  google.load 'visualization', '1.0', 'packages': [ 'timeline', 'corechart' ], callback: ->
     loaded = false
     $tracker = null
     $guide = null
+    $datafileTracker = []
+    $datafileGuide = []
 
     loadTagChart = ->
       $chart = $('#tag-chart')
 
       table = new google.visualization.DataTable()
       table.addColumn type: 'string', id: 'Tag'
+      table.addColumn type: 'string', id: 'Group'
       table.addColumn type: 'string', id: 'ID', role: 'annotation'
       table.addColumn type: 'number', id: 'Start'
       table.addColumn type: 'number', id: 'End'
-      table.addRows [[ 'Total', '', 0, video.duration() * 1000 ]]
+      table.addRows [[ 'Total', ' ', '', 0, video.duration() * 1000 ]]
       chartOptions = {
         hAxis: { format: 'mm:ss' }
       }
@@ -57,7 +60,7 @@ $ ->
       if ($chart.data('rows') || []).length > 0
         table.addRows $chart.data('rows')
         formatter = new google.visualization.PatternFormat('whaaat')
-        formatter.format(table, [1])
+        formatter.format(table, [2])
         drawChart()
 
       tagButton = video.controlBar.addChild 'button',
@@ -91,11 +94,13 @@ $ ->
 
       dialogForRow = (row) ->
         label = table.Lf[row].c[0].v
-        id = table.Lf[row].c[1].v
-        start = table.Lf[row].c[2].v
-        end = table.Lf[row].c[3].v
+        group = table.Lf[row].c[1].v
+        id = table.Lf[row].c[2].v
+        start = table.Lf[row].c[3].v
+        end = table.Lf[row].c[4].v
         $dialog.data('row', row).data('tag-id', id)
         $selectTag.val label
+        $inputGroup.val group
         $dialog.find('.field.duration input').val formatSeconds((end - start) / 1000)
         $inputStart.val formatSeconds(start / 1000)
         $inputEnd.val formatSeconds(end / 1000)
@@ -111,7 +116,7 @@ $ ->
 
       addRow = (tagStart, tagEnd) ->
         $dialog.data 'row', table.Lf.length # New
-        table.addRows [[ '', 'new', tagStart * 1000, tagEnd * 1000 ]]
+        table.addRows [[ '', ' ', 'new', tagStart * 1000, tagEnd * 1000 ]]
         dialogForRow $dialog.data('row')
         drawChart()
 
@@ -120,6 +125,7 @@ $ ->
         start = extractSeconds($inputStart.val()) * 1000
         end = extractSeconds($inputEnd.val()) * 1000
         tag = $inputTag.val()
+        group = $inputGroup.val()
         if tag.length > 0
           table.Lf[row].c[0].v = tag
           $selectTag.append "<option value='#{tag}'>#{tag}</option>"
@@ -128,13 +134,19 @@ $ ->
           autosizeDialog()
         else
           table.Lf[row].c[0].v = $selectTag.val()
-        table.Lf[row].c[2].v = start
-        table.Lf[row].c[3].v = end
+        if group.length > 0
+          table.Lf[row].c[1].v = group
+          $inputGroup.val group
+          autosizeDialog()
+        else
+          table.Lf[row].c[1].v = $inputGroup.val()
+        table.Lf[row].c[3].v = start
+        table.Lf[row].c[4].v = end
         drawChart()
 
       removeRow = ->
         row = $dialog.data('row')
-        id = table.Lf[row].c[1].v
+        id = table.Lf[row].c[2].v
         deletedTags.push id if id != 'new'
         table.removeRow(row)
         drawChart()
@@ -155,6 +167,7 @@ $ ->
       $fieldTag = $dialog.find('.field.tag')
       $selectTag = $dialog.find('.field.tag select')
       $inputTag = $dialog.find('.field.tag input')
+      $inputGroup = $dialog.find('.field.group input')
 
       deletedTags = []
 
@@ -191,14 +204,15 @@ $ ->
         prefix = "<input class='h' type='hidden' name='video[tags_attributes]"
         for tag, idx in table.Lf
           if idx > 0
-            id = tag.c[1].v
+            id = tag.c[2].v
             if id == 'new'
               id = new Date().getTime().toString()
             else
               $form.append "#{prefix}[#{id}][id]]' value='#{id}'>"
             $form.append "#{prefix}[#{id}][name]]' value='#{tag.c[0].v}'>"
-            $form.append "#{prefix}[#{id}][starts]]' value='#{tag.c[2].v}'>"
-            $form.append "#{prefix}[#{id}][ends]]' value='#{tag.c[3].v}'>"
+            $form.append "#{prefix}[#{id}][group]]' value='#{tag.c[1].v}'>"
+            $form.append "#{prefix}[#{id}][starts]]' value='#{tag.c[3].v}'>"
+            $form.append "#{prefix}[#{id}][ends]]' value='#{tag.c[4].v}'>"
         for deleted in deletedTags
           $form.append "#{prefix}[#{deleted}][id]]' value='#{deleted}'>"
           $form.append "#{prefix}[#{deleted}][_destroy]]' value='1'>"
@@ -221,13 +235,117 @@ $ ->
 
       loaded = true
 
+    loadDatafileChart = (id, index) ->
+      $datafileChart = $("#datafile-chart-#{id}")
+      table = new google.visualization.DataTable()
+      table.addColumn 'number', $datafileChart.data('columns')[2]
+      table.addColumn 'number', $datafileChart.data('columns')[1]
+      table.addColumn 'number', $datafileChart.data('ma')+" per. Mov. Avg. "+$datafileChart.data('columns')[0]
+
+      changeFormat = (secs) ->
+        minutes = parseInt(secs / 60) % 60
+        seconds = Math.round((secs % 60) * 1000) / 1000
+        minutes = "0#{minutes}" if minutes < 10
+        seconds = "0#{seconds}" if seconds < 10
+        return "#{minutes}:#{seconds}"
+
+      if ($datafileChart.data('rows') || []).length > 0
+        table.addRows $datafileChart.data('rows')
+        formatter = new google.visualization.PatternFormat('whaaat')
+        formatter.format(table, [1])
+        durationFormatter = new google.visualization.NumberFormat(decimalSymbol: ':', fractionDigits: 2)
+        durationFormatter.format(table, 0)
+        $axis0Range = table.getColumnRange(2)
+        $axis1Range = table.getColumnRange(1)
+
+      chartOptions = {
+        width: $('body').width() - 80
+        height: 500
+        chartArea: {width: '88%', left: '4%', top: '10%'}
+        title: $datafileChart.data('title')[0]
+        curveType: 'function'
+        legend: "bottom"
+        seriesType: "line"
+        titlePosition: 'in'
+        #hAxis: {format: 'mm:ss'}
+        series: [
+          {targetAxisIndex: 1}
+          {targetAxisIndex: 0}
+        ]
+        vAxes: [
+          {
+            title: $datafileChart.data('columns')[0]
+            titleTextStyle: {color: "blue"}
+            format: '0.0'
+            minValue: $axis0Range.max * -1
+            maxValue: $axis0Range.min * -1
+            gridlines:{count:5}
+            slantedText:true
+            slantedTextAngle:90
+          }
+          {
+            title: $datafileChart.data('columns')[1]
+            titleTextStyle: {color: "red"}
+            format: '0.00E00'
+            minValue: $axis1Range.max * -1
+            maxValue: $axis1Range.min * -1
+            gridlines:{count:9}
+            slantedText:true
+            slantedTextAngle:90
+          }
+        ]
+        colors:['red','blue']
+      }
+      dataChart = new google.visualization.LineChart($datafileChart.get(0))
+      $datafileTracker[index] = $("<div class='tracking-line'></div>")
+      $datafileGuide[index] = $("<div style='position:absolute;pointer-events:none;overflow:hidden'></div>")
+
+      drawChart = ->
+        # Draw first to get new height
+        dataChart.draw table, chartOptions
+        chartHeight = 480; ##$('svg:last > g:first', $datafileChart).get(0).getBoundingClientRect().height
+        $datafileChart.css height: "#{chartHeight + 60}px"
+        dataChart.draw table, chartOptions
+        $datafileChart.css height: "#{chartHeight + 30}px"
+
+        leftTop = $($('svg:last > g', $datafileChart)[1]).find(' > rect:last').get(0).getBoundingClientRect()
+        right = $($('svg:last > g', $datafileChart)[1]).find(' > rect:last').get(0).getBoundingClientRect()
+        offsetY = document.body.scrollTop
+        offsetX = document.body.scrollLeft
+        rect = {
+          lt: [ leftTop.left + offsetX, leftTop.top + offsetY ]
+          rb: [ right.right + offsetX, right.bottom + offsetY ]
+        }
+        # Guidance div
+        $datafileGuide[index]
+          .offset top: rect.lt[1], left: rect.lt[0]
+          .width rect.rb[0] - rect.lt[0]
+          .height rect.rb[1] - rect.lt[1]
+          .appendTo 'body'
+          .append $datafileTracker[index]
+
+      drawChart() if ($datafileChart.data('rows') || []).length > 0
+
+    loadAllCharts = ->
+      $('.datafile-chart').each ( index ) ->
+        id = $(this).attr('id').split('-')[2]
+        loadDatafileChart(id, index) if $("#datafile-chart-#{id}").length > 0
+
     $video = $('.video-js')
-    id = $video.attr('id')
-    video = videojs(id)
-    video.on 'loadedmetadata', (e) ->
-      loadTagChart()
-    video.on 'timeupdate', (e) ->
-      loadTagChart() unless loaded
-      time = video.currentTime()
-      secsPerPixel = $guide.width() / video.duration()
-      $tracker.offset left: $guide.offset().left + time * secsPerPixel
+    if $video.length > 0
+      id = $video.attr('id')
+      video = videojs(id)
+      video.on 'loadedmetadata', (e) ->
+        loadTagChart()
+        loadAllCharts()
+      video.on 'timeupdate', (e) ->
+        unless loaded
+          loadTagChart()
+          loadAllCharts()
+        time = video.currentTime()
+        secsPerPixel = $guide.width() / video.duration()
+        $tracker.offset left: $guide.offset().left + time * secsPerPixel
+        # For datafile chart
+        $('.datafile-chart').each ( index ) ->
+          secsPerPixelDatafile = $datafileGuide[index].width() / video.duration()
+          $datafileTracker[index].offset left: $datafileGuide[index].offset().left + time * secsPerPixelDatafile

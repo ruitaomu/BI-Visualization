@@ -3,6 +3,8 @@
 #= require evaporatejs/evaporate
 #= require videojs/dist/video-js/video.dev
 #= require admin/videos
+#= require admin/datafile
+#= require jquery-ui/autocomplete
 
 $ ->
   $videoFile = $('#video_file')
@@ -48,3 +50,16 @@ $ ->
           $form.submit()
 
         $videoFile.val('')
+
+  if $('input.autocomplete').length > 0
+    availableTags = $('input.autocomplete').data('prepopulate')
+    $('input.autocomplete').autocomplete(
+      minLength: 1
+      delay: 400
+      html: true
+      source: availableTags
+    ).data( "ui-autocomplete" )._renderItem = ( ul, item ) ->
+      return $( "<li>" )
+        .data( "ui-autocomplete-item", item )
+        .append( "<a>" + item.label + "</a>" )
+        .appendTo( ul )

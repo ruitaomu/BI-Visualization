@@ -5,6 +5,10 @@ class Tag < ActiveRecord::Base
     video.tags.pluck(:name).uniq
   end
 
+  def self.groups
+    distinct.pluck(:group).compact.reject(&:empty?)
+  end
+
   def to_s
     name
   end

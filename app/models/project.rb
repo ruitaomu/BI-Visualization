@@ -1,4 +1,5 @@
 class Project < ActiveRecord::Base
+  self.inheritance_column = false
   belongs_to :customer
   has_many :videos
   has_many :testers, through: :videos
@@ -9,6 +10,10 @@ class Project < ActiveRecord::Base
 
   def tester_id=(id)
     self.testers << Tester.find(id)
+  end
+
+  def self.project_types
+      distinct.pluck(:type).compact.reject(&:empty?)
   end
 
   def to_s

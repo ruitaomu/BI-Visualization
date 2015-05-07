@@ -63,6 +63,22 @@ ActiveAdmin.register Video do
       button 'Save Video Tags'
     end
     div class: 'chart', id: 'tag-chart', 'data-rows' => resource.tags_for_chart
+    resource.datafiles.each do |datafile|
+
+      div class: 'datafile-actions' do
+        dropdown_menu 'Datafile Actions' do
+          item 'Edit', [ :edit, resource, datafile ] if can?(:edit, datafile)
+          item 'Remove', [ resource,  datafile ], method: :delete, data: { confirm: 'Are you sure to remove this datafile?' } if can?(:delete, datafile)
+        end
+      end
+
+      div class: 'datafile-chart', id: "datafile-chart-#{datafile.id}", 'data-rows' => datafile.metadata['rows'],
+        'data-columns' => datafile.metadata['columns'], 'data-title' => datafile.metadata['title'], 'data-ma' => datafile.moving_average
+    end
+
+    div do
+      link_to 'Add Datafile', new_video_datafile_path(resource), class: 'button'
+    end
   end
 
   form do |f|
