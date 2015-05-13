@@ -5,6 +5,16 @@ ActiveAdmin.register Datafile do
 
   belongs_to :video
 
+  member_action :chart_data, :method => :get do
+    @datafile = Datafile.find params[:id]
+    respond_to do |format|
+      format.json {
+        render json: {rows: @datafile.rows_for_chart, columns: @datafile.metadata['columns'],
+                      title: @datafile.metadata['title'], movingAverage: @datafile.moving_average}
+      }
+    end
+  end
+
   controller do
     def create
       create! do |success, failure|
@@ -53,7 +63,8 @@ ActiveAdmin.register Datafile do
 
     actions defaults: false do
       action :submit, button_html: { class: 'disabled', disabled: true }
-      cancel_link
+      @video = Video.find(params[:video_id])
+      cancel_link project_video_path(@video.project, @video )
     end
   end
 end

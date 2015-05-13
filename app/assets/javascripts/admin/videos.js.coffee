@@ -3,6 +3,7 @@ $ ->
     loaded = false
     $tracker = null
     $guide = null
+    $datafileData = {rows: [], columns: [], title: [], movingAverage: ''}
     $datafileTracker = []
     $datafileGuide = []
 
@@ -238,19 +239,20 @@ $ ->
     loadDatafileChart = (id, index) ->
       $datafileChart = $("#datafile-chart-#{id}")
       table = new google.visualization.DataTable()
-      table.addColumn 'number', $datafileChart.data('columns')[2]
-      table.addColumn 'number', $datafileChart.data('columns')[1]
-      table.addColumn 'number', $datafileChart.data('ma')+" per. Mov. Avg. "+$datafileChart.data('columns')[0]
+      table.addColumn 'number', $datafileData.columns[2]
+      table.addColumn 'number', $datafileData.columns[1]
+      table.addColumn 'number', $datafileData.movingAverage+" per. Mov. Avg. "+$datafileData.columns[0]
 
       changeFormat = (secs) ->
+        secs = secs.replace(',','')
         minutes = parseInt(secs / 60) % 60
         seconds = Math.round((secs % 60) * 1000) / 1000
         minutes = "0#{minutes}" if minutes < 10
         seconds = "0#{seconds}" if seconds < 10
         return "#{minutes}:#{seconds}"
 
-      if ($datafileChart.data('rows') || []).length > 0
-        table.addRows $datafileChart.data('rows')
+      if ($datafileData.rows || []).length > 0
+        table.addRows $datafileData.rows
         formatter = new google.visualization.PatternFormat('whaaat')
         formatter.format(table, [1])
         durationFormatter = new google.visualization.NumberFormat(decimalSymbol: ':', fractionDigits: 2)
@@ -262,7 +264,7 @@ $ ->
         width: $('body').width() - 80
         height: 500
         chartArea: {width: '88%', left: '4%', top: '10%'}
-        title: $datafileChart.data('title')[0]
+        title: $datafileData.title[0]
         curveType: 'function'
         legend: "bottom"
         seriesType: "line"
@@ -274,7 +276,7 @@ $ ->
         ]
         vAxes: [
           {
-            title: $datafileChart.data('columns')[0]
+            title: $datafileData.columns[0]
             titleTextStyle: {color: "blue"}
             format: '0.0'
             minValue: $axis0Range.max * -1
@@ -284,7 +286,7 @@ $ ->
             slantedTextAngle:90
           }
           {
-            title: $datafileChart.data('columns')[1]
+            title: $datafileData.columns[1]
             titleTextStyle: {color: "red"}
             format: '0.00E00'
             minValue: $axis1Range.max * -1
@@ -324,12 +326,26 @@ $ ->
           .appendTo 'body'
           .append $datafileTracker[index]
 
-      drawChart() if ($datafileChart.data('rows') || []).length > 0
+        xAxisTextArray = $($('svg:last > g', $datafileChart)[1]).find(' > g:last').find("text[text-anchor='middle']")
+        $.each xAxisTextArray, ( index, value ) ->
+          $(value).text(changeFormat($(value).text()))
+
+      drawChart() if ($datafileData.rows || []).length > 0
 
     loadAllCharts = ->
       $('.datafile-chart').each ( index ) ->
         id = $(this).attr('id').split('-')[2]
-        loadDatafileChart(id, index) if $("#datafile-chart-#{id}").length > 0
+        videoId = $(this).data('video-id')
+        $.ajax
+          type: 'GET'
+          contentType: 'application/json; charset=utf-8'
+          url: '/videos/'+videoId+'/datafiles/'+id+'/chart_data'
+          dataType: 'json'
+          success: (data) ->
+            $datafileData = {rows: data.rows, columns: data.columns, title: data.title, movingAverage: data.movingAverage}
+            loadDatafileChart(id, index) if $("#datafile-chart-#{id}").length > 0
+          error: (result) ->
+            alert("Error loading chart")
 
     $video = $('.video-js')
     if $video.length > 0

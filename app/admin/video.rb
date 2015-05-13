@@ -71,9 +71,7 @@ ActiveAdmin.register Video do
           item 'Remove', [ resource,  datafile ], method: :delete, data: { confirm: 'Are you sure to remove this datafile?' } if can?(:delete, datafile)
         end
       end
-
-      div class: 'datafile-chart', id: "datafile-chart-#{datafile.id}", 'data-rows' => datafile.metadata['rows'],
-        'data-columns' => datafile.metadata['columns'], 'data-title' => datafile.metadata['title'], 'data-ma' => datafile.moving_average
+      div class: 'datafile-chart', id: "datafile-chart-#{datafile.id}", 'data-video-id' => datafile.video_id
     end
 
     div do

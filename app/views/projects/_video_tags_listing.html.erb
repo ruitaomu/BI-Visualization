@@ -1,0 +1,33 @@
+<h4>Project Video Tags with duration Average</h4>
+<table border="0" cellspacing="0" cellpadding="0" class="index_table">
+  <thead>
+  <tr>
+    <th class="col col-name">Tag</th>
+    <th class="col">Videos</th>
+    <th class="col">Duration Average</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% resource.videos_tags.each_with_index do |tag, index| %>
+      <% tagged_video_ids = Tag.where(:name => tag.name).collect(&:video_id) %>
+      <% tagged_videos = resource.videos.where('id IN (?)', tagged_video_ids) %>
+      <% total_duration = [] %>
+
+      <tr class="<%= index % 2 == 0 ? 'even':'odd' %>" id="tag_<%=tag.id%>">
+        <td class="col col-name"><%= tag.name %></td>
+        <td class="col">
+          <% tagged_videos.each_with_index do |video, index| %>
+            <%= ', ' unless index.eql?(0) %>
+            <%= link_to video.tester.name, [resource, video] %>
+          <% end %>
+        </td>
+        <td class="col">
+          <% tagged_videos.each_with_index do |video, index| %>
+              <% total_duration << video.tags.where(:name => tag.name).map(&:duration) %>
+          <% end %>
+          <%= eval("(#{total_duration.join('+')})/#{tagged_videos.count}").round(3) %> mins
+        </td>
+      </tr>
+   <% end %>
+  </tbody>
+</table>

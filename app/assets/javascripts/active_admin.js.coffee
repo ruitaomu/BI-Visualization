@@ -57,7 +57,10 @@ $ ->
       minLength: 1
       delay: 400
       html: true
-      source: availableTags
+      source: availableTags,
+      messages:
+        noResults: ''
+        results: ''
     ).data( "ui-autocomplete" )._renderItem = ( ul, item ) ->
       return $( "<li>" )
         .data( "ui-autocomplete-item", item )

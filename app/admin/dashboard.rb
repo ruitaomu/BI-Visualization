@@ -17,9 +17,13 @@ ActiveAdmin.register_page 'Dashboard' do
 
       column do
         panel 'Projects' do
-          ul do
-            Project.all.each do |project|
-              li link_to(project, project)
+          Project.types.each do |type|
+            panel type, {class: 'inner'} do
+              ul do
+                Project.unarchived(type).each do |project|
+                  li link_to(project, project)
+                end
+              end
             end
           end
           para 'There are no projects yet.' unless Project.any?

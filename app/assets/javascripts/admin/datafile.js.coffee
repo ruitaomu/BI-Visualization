@@ -10,6 +10,8 @@ $ ->
     if $dataFile.val().length > 0
       $progress.css(width: '100%').html('100%')
       enableSubmit()
+    else if $form.attr('id').split('_')[0] == 'edit'
+      enableSubmit()
     else
       disableSubmit()
 

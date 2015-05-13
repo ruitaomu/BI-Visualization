@@ -1,6 +1,11 @@
 ActiveAdmin.register Project do
   include AdminResource
 
+  action_item :archive, only: :show do
+    link_to("#{resource.archived? ? 'un-archive':'archive' }",
+            project_path(resource, project: {archived: !resource.archived?}), method: :put)
+  end
+
   controller do
     def scoped_collection
       super.includes :customer
@@ -19,6 +24,7 @@ ActiveAdmin.register Project do
       project.testers.count
     end
     column :type
+    column :archived
     action_icons
   end
 
@@ -45,6 +51,8 @@ ActiveAdmin.register Project do
     div do
       link_to 'Add Video', new_project_video_path(project), class: 'button'
     end
+    br
+    div render('video_tags_listing')
   end
 
   form do |f|
@@ -52,6 +60,7 @@ ActiveAdmin.register Project do
       input :customer
       input :name
       input :type, input_html: {class: 'autocomplete', data: {prepopulate: Project.project_types}}
+      input :archived
     end
 
     actions

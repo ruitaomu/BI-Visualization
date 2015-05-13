@@ -12,4 +12,8 @@ class Tag < ActiveRecord::Base
   def to_s
     name
   end
+
+  def duration
+    ((((self.ends.to_f / 1000) - (self.starts.to_f / 1000)) / 60) % 60).round(3)
+  end
 end

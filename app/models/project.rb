@@ -7,6 +7,11 @@ class Project < ActiveRecord::Base
   validates :name, :customer_id, presence: true
 
   attr_accessor :tester_id
+  scope :unarchived, -> (type) { where(type: type, archived: false)  }
+
+  def self.types
+    all.collect(&:type).uniq
+  end
 
   def tester_id=(id)
     self.testers << Tester.find(id)
@@ -18,5 +23,13 @@ class Project < ActiveRecord::Base
 
   def to_s
     name
+  end
+
+  def videos_tags
+    tags = []
+    self.videos.each do |video|
+      tags << video.tags
+    end
+    tags.flatten.uniq {|t| t.name}
   end
 end

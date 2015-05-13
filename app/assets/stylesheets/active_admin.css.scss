@@ -31,6 +31,13 @@
   }
 }
 
+.panel.inner{
+  margin-bottom: 2px;
+  .panel_contents{
+    padding-bottom: 2px;
+  }
+}
+
 // Videos
 
 body.videos.show {
@@ -232,3 +239,4 @@ ul.ui-autocomplete {
   }
 }
 
+.ui-helper-hidden-accessible { display:none; }

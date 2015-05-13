@@ -11,11 +11,7 @@ class Datafile < ActiveRecord::Base
        columns << row.shift(1).join(' ')
     end
 
-    rows = datarows.first.each_with_index.map do |value, index|
-      [ datarows[2][index], datarows[1][index], datarows[0][index, self.moving_average].simple_moving_average ]
-    end
-
-    self.update_attributes(metadata: { title: title, columns: columns, rows: rows})
+    self.update_attributes(metadata: { title: title, columns: columns, rows: datarows})
   end
 
   def parse_datafile(file_path)
@@ -23,5 +19,13 @@ class Datafile < ActiveRecord::Base
     workbook = RubyXL::Parser.parse(file.path)
     worksheet = workbook[0]
     datarows = worksheet.extract_data
+  end
+
+  def rows_for_chart
+    dataRows = self.metadata['rows']
+    rows = dataRows.first.each_with_index.map do |row, index|
+      [ dataRows[2][index], dataRows[1][index], dataRows[0][index, self.moving_average].simple_moving_average ]
+    end
+    rows
   end
 end
