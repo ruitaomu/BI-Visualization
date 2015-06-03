@@ -22,10 +22,22 @@ class Datafile < ActiveRecord::Base
   end
 
   def rows_for_chart
+    deviation = self.get_standard_deviation * self.threshold
     dataRows = self.metadata['rows']
     rows = dataRows.first.each_with_index.map do |row, index|
-      [ dataRows[2][index], dataRows[1][index], dataRows[0][index, self.moving_average].simple_moving_average ]
+      [ dataRows[2][index], dataRows[1][index], dataRows[0][index, self.moving_average].simple_moving_average, deviation, -deviation ]
     end
     rows
   end
+
+  def get_standard_deviation
+    dataRows = self.metadata['rows']
+    data = []
+    dataRows.first.each_with_index.map do |row, index|
+      data << dataRows[0][index, self.moving_average].simple_moving_average
+    end
+    data.standard_deviation
+  end
+
+
 end

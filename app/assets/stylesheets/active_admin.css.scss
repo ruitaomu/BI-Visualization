@@ -217,17 +217,28 @@ ul.ui-autocomplete {
   *border-right-width: 2px;
   *border-bottom-width: 2px;
 
-  .ui-menu-item > a {
-    display: block;
-    padding: 3px 15px;
-    clear: both;
-    font-weight: normal;
-    line-height: 18px;
-    color: #555555;
-    white-space: nowrap;
-    text-decoration: none;
+  .ui-menu-item {
+    > a {
+      display: block;
+      padding: 3px 15px;
+      clear: both;
+      font-weight: normal;
+      line-height: 18px;
+      color: #555555;
+      white-space: nowrap;
+      text-decoration: none;
 
-    &.ui-state-hover, &.ui-state-active {
+      &.ui-state-hover, &.ui-state-active {
+        color: #ffffff;
+        text-decoration: none;
+        background-color: #0088cc;
+        border-radius: 0px;
+        -webkit-border-radius: 0px;
+        -moz-border-radius: 0px;
+        background-image: none;
+      }
+    }
+    &.ui-state-focus{
       color: #ffffff;
       text-decoration: none;
       background-color: #0088cc;
@@ -235,8 +246,19 @@ ul.ui-autocomplete {
       -webkit-border-radius: 0px;
       -moz-border-radius: 0px;
       background-image: none;
+      a {
+        color: #ffffff;
+      }
     }
   }
 }
 
 .ui-helper-hidden-accessible { display:none; }
+
+.pull-right { float: right; }
+.pull-left { float: left; }
+
+a.status_tag {
+  color: #ffffff;
+  text-decoration: none;
+}

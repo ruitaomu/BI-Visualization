@@ -10,7 +10,8 @@ ActiveAdmin.register Datafile do
     respond_to do |format|
       format.json {
         render json: {rows: @datafile.rows_for_chart, columns: @datafile.metadata['columns'],
-                      title: @datafile.metadata['title'], movingAverage: @datafile.moving_average}
+                      title: @datafile.metadata['title'], movingAverage: @datafile.moving_average,
+                      threshold: @datafile.threshold, standardDeviation: @datafile.get_standard_deviation}
       }
     end
   end
@@ -56,6 +57,7 @@ ActiveAdmin.register Datafile do
     inputs do
       input :video_id, as: :hidden, value: params[:video_id]
       input :moving_average
+      input :threshold
       input :file,
             as: :file,
             input_html: {data: {prefix: "video-#{params[:video_id]}"}}

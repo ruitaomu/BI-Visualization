@@ -4,31 +4,20 @@ ActiveAdmin.register_page 'Dashboard' do
   content title: I18n.t('active_admin.dashboard') do
     columns do
       column do
-        panel 'Customers' do
-          ul do
-            Customer.all.each do |customer|
-              li link_to(customer, customer)
-            end
-          end
-          para 'There are no customers yet.' unless Customer.any?
-          div link_to('Create Customer', new_customer_path, class: 'button')
-        end
-      end
+        h3 'Project Types'
+        para 'There are no project Types present yet.' if Project.types.empty?
 
-      column do
-        panel 'Projects' do
-          Project.types.each do |type|
-            panel type, {class: 'inner'} do
-              ul do
-                Project.unarchived(type).each do |project|
-                  li link_to(project, project)
-                end
-              end
+        Project.types.sort.reverse.each do |type|
+          table_for Project.unarchived(type), class: 'index_table' do
+            column "#{type.blank? ? 'No project type' : type}" do |project|
+              link_to(project, project) +
+              link_to('archive', project_path(project, project: {archived: true}), method: :put, remote: true,
+                      data: {confirm: 'Are you sure you want to archive this project?'}, class: 'status_tag yes pull-right' )
             end
           end
-          para 'There are no projects yet.' unless Project.any?
-          div link_to('Create Project', new_project_path, class: 'button')
+          br
         end
+
       end
     end
   end

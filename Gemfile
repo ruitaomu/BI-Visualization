@@ -19,6 +19,7 @@ gem 'appsignal'
 gem 'non-stupid-digest-assets'
 gem 'rubyXL'
 gem 'moving_average'
+gem 'descriptive_statistics', '~> 2.4.0', :require => 'descriptive_statistics/safe'
 
 group :development, :test do
   gem 'byebug'

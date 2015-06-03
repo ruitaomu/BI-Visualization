@@ -13,7 +13,7 @@ class Tag < ActiveRecord::Base
     name
   end
 
-  def duration
-    ((((self.ends.to_f / 1000) - (self.starts.to_f / 1000)) / 60) % 60).round(3)
+  def duration_in_secs
+    ((self.ends.to_f / 1000) - (self.starts.to_f / 1000)).round(3)
   end
 end

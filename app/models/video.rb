@@ -14,7 +14,7 @@ class Video < ActiveRecord::Base
   validates :tester, :project, presence: true
 
   def tags_for_chart
-    tags.order('tags.group').map do |tag|
+    chart_tags  = tags.order('tags.group').map do |tag|
       [ tag.name, tag.group, tag.id.to_s, tag.starts, tag.ends ]
     end
   end

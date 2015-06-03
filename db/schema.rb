@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150508185511) do
+ActiveRecord::Schema.define(version: 20150528050129) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -43,6 +43,7 @@ ActiveRecord::Schema.define(version: 20150508185511) do
     t.datetime "updated_at",                  null: false
     t.json     "metadata",       default: {}, null: false
     t.integer  "moving_average", default: 50
+    t.integer  "threshold",      default: 1
   end
 
   add_index "datafiles", ["video_id"], name: "index_datafiles_on_video_id", using: :btree
@@ -54,6 +55,7 @@ ActiveRecord::Schema.define(version: 20150508185511) do
     t.datetime "updated_at",                  null: false
     t.string   "type",        default: "",    null: false
     t.boolean  "archived",    default: false, null: false
+    t.json     "metadata",    default: {},    null: false
   end
 
   add_index "projects", ["customer_id"], name: "index_projects_on_customer_id", using: :btree

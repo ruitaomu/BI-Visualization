@@ -13,6 +13,5 @@ unless User.any?
                roles: [Role.find_by(name: 'admin')])
 end
 
-unless Setting.any?
-  Setting.create!(name: 'tester_attributes', value: 'age, game_level, personality_type')
-end
+Setting.create!(name: 'tester_attributes', value: 'age, game_level, personality_type') unless Setting.find_by(name: 'tester_attributes')
+Setting.create!(name: 'project_attributes', value: 'game_type, customer, game_version, hardware') unless Setting.find_by(name: 'project_attributes')

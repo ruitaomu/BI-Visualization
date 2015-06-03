@@ -4,6 +4,7 @@
 #= require videojs/dist/video-js/video.dev
 #= require admin/videos
 #= require admin/datafile
+#= require jquery.throttledresize
 #= require jquery-ui/autocomplete
 
 $ ->

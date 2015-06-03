@@ -58,11 +58,6 @@ ActiveAdmin.register Video do
 
       source src: resource.url, type: 'video/mp4'
     end
-    div render('dialog')
-    form_for [ resource.project, resource ], html: { class: 'update-tags' } do
-      button 'Save Video Tags'
-    end
-    div class: 'chart', id: 'tag-chart', 'data-rows' => resource.tags_for_chart
     resource.datafiles.each do |datafile|
 
       div class: 'datafile-actions' do
@@ -77,6 +72,11 @@ ActiveAdmin.register Video do
     div do
       link_to 'Add Datafile', new_video_datafile_path(resource), class: 'button'
     end
+    div render('dialog')
+    form_for [ resource.project, resource ], html: { class: 'update-tags' } do
+      button 'Save Video Tags'
+    end
+    div class: 'chart', id: 'tag-chart', class: "#{'hidden' if resource.tags_for_chart.length < 1}", 'data-rows' => resource.tags_for_chart
   end
 
   form do |f|

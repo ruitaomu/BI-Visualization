@@ -10,6 +10,16 @@ ActiveAdmin.register Project do
     def scoped_collection
       super.includes :customer
     end
+
+    def update
+      if request.xhr?
+        update! do |success, failure|
+          success.js { request.referer.include?('dashboard') ? (render 'update_dashboard') : (render nothing: true) }
+        end
+      else
+        super
+      end
+    end
   end
 
   index do
@@ -61,6 +71,9 @@ ActiveAdmin.register Project do
       input :name
       input :type, input_html: {class: 'autocomplete', data: {prepopulate: Project.project_types}}
       input :archived
+      Setting.project_attributes.each do |attr|
+        input :"metadata_#{attr}", label: attr.humanize
+      end
     end
 
     actions

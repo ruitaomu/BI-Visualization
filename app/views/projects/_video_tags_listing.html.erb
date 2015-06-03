@@ -4,7 +4,7 @@
   <tr>
     <th class="col col-name">Tag</th>
     <th class="col">Videos</th>
-    <th class="col">Duration Average</th>
+    <th class="col">Duration Average (HH:MM:SS)</th>
   </tr>
   </thead>
   <tbody>
@@ -23,9 +23,9 @@
         </td>
         <td class="col">
           <% tagged_videos.each_with_index do |video, index| %>
-              <% total_duration << video.tags.where(:name => tag.name).map(&:duration) %>
+              <% total_duration << video.tags.where(:name => tag.name).map(&:duration_in_secs) %>
           <% end %>
-          <%= eval("(#{total_duration.join('+')})/#{tagged_videos.count}").round(3) %> mins
+          <%= formatSeconds(eval("(#{total_duration.join('+')})/#{tagged_videos.count}").round(3)) %>
         </td>
       </tr>
    <% end %>

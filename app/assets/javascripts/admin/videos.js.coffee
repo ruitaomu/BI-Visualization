@@ -242,6 +242,8 @@ $ ->
       table.addColumn 'number', $datafileData.columns[2]
       table.addColumn 'number', $datafileData.columns[1]
       table.addColumn 'number', $datafileData.movingAverage+" per. Mov. Avg. "+$datafileData.columns[0]
+      table.addColumn 'number', 'UL Standard Deviation'
+      table.addColumn 'number', 'LL Standard Deviation'
 
       changeFormat = (secs) ->
         secs = secs.replace(',','')
@@ -261,7 +263,7 @@ $ ->
         $axis1Range = table.getColumnRange(1)
 
       chartOptions = {
-        width: $('body').width() - 80
+        width: $('body').width() - 60
         height: 500
         chartArea: {width: '88%', left: '4%', top: '10%'}
         title: $datafileData.title[0]
@@ -273,6 +275,8 @@ $ ->
         series: [
           {targetAxisIndex: 1}
           {targetAxisIndex: 0}
+          {visibleInLegend: false, lineWidth: 4}
+          {visibleInLegend: false, lineWidth: 4}
         ]
         vAxes: [
           {
@@ -296,7 +300,7 @@ $ ->
             slantedTextAngle:90
           }
         ]
-        colors:['red','blue']
+        colors:['red','blue', 'yellow', 'green']
       }
       dataChart = new google.visualization.LineChart($datafileChart.get(0))
       $datafileTracker[index] = $("<div class='tracking-line'></div>")
@@ -336,13 +340,16 @@ $ ->
       $('.datafile-chart').each ( index ) ->
         id = $(this).attr('id').split('-')[2]
         videoId = $(this).data('video-id')
+        $datafileTracker[index].remove() if $datafileTracker[index]
+        $datafileGuide[index].remove()   if $datafileGuide[index]
         $.ajax
           type: 'GET'
           contentType: 'application/json; charset=utf-8'
           url: '/videos/'+videoId+'/datafiles/'+id+'/chart_data'
           dataType: 'json'
+          async: false
           success: (data) ->
-            $datafileData = {rows: data.rows, columns: data.columns, title: data.title, movingAverage: data.movingAverage}
+            $datafileData = {rows: data.rows, columns: data.columns, title: data.title, movingAverage: data.movingAverage, threshold: data.threshold, stdev: data.standardDeviation}
             loadDatafileChart(id, index) if $("#datafile-chart-#{id}").length > 0
           error: (result) ->
             alert("Error loading chart")
@@ -352,12 +359,12 @@ $ ->
       id = $video.attr('id')
       video = videojs(id)
       video.on 'loadedmetadata', (e) ->
-        loadTagChart()
         loadAllCharts()
+        loadTagChart()
       video.on 'timeupdate', (e) ->
         unless loaded
-          loadTagChart()
           loadAllCharts()
+          loadTagChart()
         time = video.currentTime()
         secsPerPixel = $guide.width() / video.duration()
         $tracker.offset left: $guide.offset().left + time * secsPerPixel
@@ -365,3 +372,7 @@ $ ->
         $('.datafile-chart').each ( index ) ->
           secsPerPixelDatafile = $datafileGuide[index].width() / video.duration()
           $datafileTracker[index].offset left: $datafileGuide[index].offset().left + time * secsPerPixelDatafile
+
+      $(window).on "throttledresize", (event) ->
+        loadAllCharts()
+
