@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150528050129) do
+ActiveRecord::Schema.define(version: 20150609184520) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -44,6 +44,7 @@ ActiveRecord::Schema.define(version: 20150528050129) do
     t.json     "metadata",       default: {}, null: false
     t.integer  "moving_average", default: 50
     t.integer  "threshold",      default: 1
+    t.string   "data_type",      default: ""
   end
 
   add_index "datafiles", ["video_id"], name: "index_datafiles_on_video_id", using: :btree
@@ -79,14 +80,26 @@ ActiveRecord::Schema.define(version: 20150528050129) do
     t.string "value"
   end
 
+  create_table "tag_series", force: :cascade do |t|
+    t.integer  "video_id"
+    t.string   "name"
+    t.string   "tag_ids",    default: [],              array: true
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+  end
+
+  add_index "tag_series", ["video_id"], name: "index_tag_series_on_video_id", using: :btree
+
   create_table "tags", force: :cascade do |t|
-    t.integer  "video_id",   null: false
-    t.string   "name",       null: false
-    t.integer  "starts",     null: false
-    t.integer  "ends",       null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "video_id",                   null: false
+    t.string   "name",                       null: false
+    t.integer  "starts",                     null: false
+    t.integer  "ends",                       null: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
     t.string   "group"
+    t.boolean  "auto",       default: false
+    t.integer  "parent_id"
   end
 
   add_index "tags", ["ends"], name: "index_tags_on_ends", using: :btree
@@ -130,6 +143,7 @@ ActiveRecord::Schema.define(version: 20150528050129) do
   add_index "videos", ["tester_id"], name: "index_videos_on_tester_id", using: :btree
 
   add_foreign_key "projects", "customers"
+  add_foreign_key "tag_series", "videos"
   add_foreign_key "videos", "projects"
   add_foreign_key "videos", "testers"
 end

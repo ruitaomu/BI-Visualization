@@ -40,6 +40,7 @@ ActiveAdmin.register Video do
     column do |video|
       links = []
       links << link_to('Edit', [ :edit, video.project, video ]) if can?(:edit, video)
+      links << link_to('Tag Series', [ :new, video, :tag_series ]) if can?(:edit, video)
       links << link_to('Remove',
                        [ video.project, video ],
                        method: :delete, data: { confirm: 'Are you sure?' }
@@ -76,7 +77,12 @@ ActiveAdmin.register Video do
     form_for [ resource.project, resource ], html: { class: 'update-tags' } do
       button 'Save Video Tags'
     end
-    div class: 'chart', id: 'tag-chart', class: "#{'hidden' if resource.tags_for_chart.length < 1}", 'data-rows' => resource.tags_for_chart
+    div class: "chart #{'hidden' if resource.tags_for_chart.length < 1}", id: 'tag-chart', 'data-rows' => resource.tags_for_chart
+    br
+    div class: "#{'hidden' if resource.auto_tags_for_chart.length < 1}" do
+      h3 'Automatic Tags'
+      div class: 'auto-tag-chart', id: 'auto-tag-chart', 'data-rows' => resource.auto_tags_for_chart
+    end
   end
 
   form do |f|

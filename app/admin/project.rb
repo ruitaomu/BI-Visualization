@@ -2,8 +2,8 @@ ActiveAdmin.register Project do
   include AdminResource
 
   action_item :archive, only: :show do
-    link_to("#{resource.archived? ? 'un-archive':'archive' }",
-            project_path(resource, project: {archived: !resource.archived?}), method: :put)
+    link_to(resource.archived? ? 'Unarchive' : 'Archive',
+            project_path(resource, project: { archived: !resource.archived? }), method: :put)
   end
 
   controller do
@@ -44,6 +44,14 @@ ActiveAdmin.register Project do
     table_for project.videos.includes(:tester), class: 'index_table' do
       column :name do |video|
         link_to_if can?(:show, video), video.tester, [ project, video ]
+      end
+      column 'Tag Series' do |video|
+        links = []
+        links << link_to('Create', [ :new, video, :tag_series ]) if can?(:edit, video) && !video.tag_series.present?
+        links << link_to('Show', [ video, video.tag_series]) if can?(:edit, video) && video.tag_series.present?
+        links << link_to('Edit', [ :edit, video, video.tag_series ]) if can?(:edit, video) && video.tag_series.present?
+        links << link_to('Remove', [ video, video.tag_series ], method: :delete) if can?(:edit, video) && video.tag_series.present?
+        links.join(' | ').html_safe
       end
       column do |video|
         links = []

@@ -40,7 +40,7 @@
 
 // Videos
 
-body.videos.show {
+body.videos.show, body.tag_series.show {
   .video-js {
     margin: 0 auto;
   }
@@ -262,3 +262,5 @@ a.status_tag {
   color: #ffffff;
   text-decoration: none;
 }
+
+.hidden {display: none;}
