@@ -9,6 +9,7 @@
 
 // Active Admin's got SASS!
 @import "active_admin/mixins";
+@import "active_admin_sidebar/index";
 @import "active_admin/base";
 
 // Overriding any non-variable SASS must be done after the fact.
@@ -18,8 +19,36 @@
 
 @import "videojs/dist/video-js/video-js";
 
+body.active_admin {
+  form.formtastic{
+    input[type=text], input[type=password],
+    input[type=email], input[type=number],
+    input[type=url], input[type=tel],
+    input[type=file], textarea {
+      width: calc(100% - 22px);
+    }
+    input[type="text"][size],
+    input[type="number"][size] {
+      width: auto;
+    }
+    select {
+      width: calc(100% - 0px);
+    }
+    li.input.boolean {
+      label{
+        padding-left: 0;
+      }
+    }
+  }
+}
+
+.with_sidebar #main_content {
+  display: inline-block;
+  width: 100%;
+}
+
 #progress {
-  margin: 5px 0 0 20%;
+  margin: 5px 0 0 0;
   box-sizing: border-box;
   border: 1px solid silver;
   border-radius: 5px;
@@ -80,8 +109,13 @@ body.videos.show, body.tag_series.show {
     }
   }
   .datafile-actions{
-    text-align: right;
+    text-align: center;
     margin-top: 20px;
+    height: 29px;
+    span.title{
+      font-size: 15px;
+      font-weight: 600;
+    }
   }
 }
 

@@ -13,6 +13,7 @@ gem 'therubyracer', platforms: :ruby
 
 gem 'devise'
 gem 'activeadmin', github: 'activeadmin'
+gem 'active_admin_sidebar'
 gem 'pundit'
 gem 'paperclip'
 gem 'appsignal'

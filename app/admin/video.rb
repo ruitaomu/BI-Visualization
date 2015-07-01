@@ -60,14 +60,17 @@ ActiveAdmin.register Video do
       source src: resource.url, type: 'video/mp4'
     end
     resource.datafiles.each do |datafile|
-
-      div class: 'datafile-actions' do
-        dropdown_menu 'Datafile Actions' do
-          item 'Edit', [ :edit, resource, datafile ] if can?(:edit, datafile)
-          item 'Remove', [ resource,  datafile ], method: :delete, data: { confirm: 'Are you sure to remove this datafile?' } if can?(:delete, datafile)
+      div id: "datafile-#{datafile.id}"
+        div class: 'datafile-actions' do
+          span class: 'title' do
+            datafile.metadata['title'][0]
+          end
+          dropdown_menu 'Actions' do
+            item 'Edit', [ :edit, resource, datafile ] if can?(:edit, datafile)
+            item 'Remove', [ resource,  datafile ], method: :delete, data: { confirm: 'Are you sure to remove this datafile?' } if can?(:delete, datafile)
+          end
         end
-      end
-      div class: 'datafile-chart', id: "datafile-chart-#{datafile.id}", 'data-video-id' => datafile.video_id
+        div class: 'datafile-chart', id: "datafile-chart-#{datafile.id}", 'data-video-id' => datafile.video_id
     end
 
     div do
