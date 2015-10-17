@@ -2,6 +2,6 @@
   "name": "BrainIntelligence",
   "dependencies": {
     "evaporatejs": "",
-    "videojs": ""
+    "videojs": "4.12.5"
   }
 }

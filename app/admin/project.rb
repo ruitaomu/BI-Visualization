@@ -39,38 +39,41 @@ ActiveAdmin.register Project do
   end
 
   show title: :to_s do
-    h3 project.customer
-    h4 'Videos'
-    table_for project.videos.includes(:tester), class: 'index_table' do
-      column :name do |video|
-        link_to_if can?(:show, video), video.tester, [ project, video ]
-      end
-      column 'Tag Series' do |video|
-        links = []
-        links << link_to('Create', [ :new, video, :tag_series ]) if can?(:edit, video) && !video.tag_series.present?
-        links << link_to('Show', [ video, video.tag_series]) if can?(:edit, video) && video.tag_series.present?
-        links << link_to('Edit', [ :edit, video, video.tag_series ]) if can?(:edit, video) && video.tag_series.present?
-        links << link_to('Remove', [ video, video.tag_series ], method: :delete) if can?(:edit, video) && video.tag_series.present?
-        links.join(' | ').html_safe
-      end
-      column do |video|
-        links = []
-        links << link_to('Edit', [ :edit, project, video ]) if can?(:edit, video)
-        links << link_to('Remove',
-                         [ project, video ],
-                         method: :delete, data: { confirm: 'Are you sure?' }
-        ) if can?(:delete, video)
-        links.join(' | ').html_safe
-      end
-    end
+    tabs do
+      tab 'General' do
+        table_for project.videos.includes(:tester), class: 'index_table' do
+          column :name do |video|
+            link_to_if can?(:show, video), video.tester, [ project, video ]
+          end
+          column 'Tag Series' do |video|
+            links = []
+            links << link_to('Create', [ :new, video, :tag_series ]) if can?(:edit, video) && !video.tag_series.present?
+            links << link_to('Show', [ video, video.tag_series]) if can?(:edit, video) && video.tag_series.present?
+            links << link_to('Edit', [ :edit, video, video.tag_series ]) if can?(:edit, video) && video.tag_series.present?
+            links << link_to('Remove', [ video, video.tag_series ], method: :delete) if can?(:edit, video) && video.tag_series.present?
+            links.join(' | ').html_safe
+          end
+          column do |video|
+            links = []
+            links << link_to('Edit', [ :edit, project, video ]) if can?(:edit, video)
+            links << link_to('Remove',
+                             [ project, video ],
+                             method: :delete, data: { confirm: 'Are you sure?' }
+            ) if can?(:delete, video)
+            links.join(' | ').html_safe
+          end
+        end
 
-    para 'There are no videos for this project yet.' if project.videos.empty?
+        para 'There are no videos for this project yet.' if project.videos.empty?
 
-    div do
-      link_to 'Add Video', new_project_video_path(project), class: 'button'
+        div do
+          link_to 'Add Video', new_project_video_path(project), class: 'button'
+        end
+        br
+        div render('video_tags_listing')
+      end
+      tab 'Data'
     end
-    br
-    div render('video_tags_listing')
   end
 
   form do |f|

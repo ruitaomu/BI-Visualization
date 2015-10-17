@@ -7,7 +7,7 @@ See `provision/README.md` for instructions to setup a server.
 Create the database on the server:
 
     sudo su postgres
-    createuser --create-db <user_name> # Same as login user
+    createuser --createdb <user_name> # Same as login user
     exit
     createdb <database_name> # As configured in database.yml later
 
