@@ -63,7 +63,7 @@ ActiveAdmin.register Video do
       div id: "datafile-#{datafile.id}"
         div class: 'datafile-actions' do
           span class: 'title' do
-            datafile.metadata['title'][0]
+            datafile.metadata['title'].try :[], 0
           end
           dropdown_menu 'Actions' do
             item 'Edit', [ :edit, resource, datafile ] if can?(:edit, datafile)
