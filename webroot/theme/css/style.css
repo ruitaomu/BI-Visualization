@@ -4475,15 +4475,32 @@ tr.odd.gradeX td.sorting_1, tr.even.gradeX td.sorting_1, table.display tr.even.g
 }
 
 .ui-sortable > li {
-    padding: 15px 0 15px 35px !important ;
+    padding: 15px 0 15px 15px !important ;
     position: relative;
     background: #f5f6f8;
     margin-bottom: 2px;
     border-bottom   : none !important;
+    cursor: move;
+    border-left: 3px solid #41CAC0;
 }
 
-.ui-sortable li.list-primary {
+.ui-sortable > li > i {
+  color: #ff6c60;
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+.ui-sortable > li > span {
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+.ui-sortable li.list-primary, div.list-primary {
     border-left: 3px solid #41CAC0;
+}
+
+div.list-primary {
+  padding: 15px;
 }
 
 .ui-sortable li.list-success {

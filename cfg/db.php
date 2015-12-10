@@ -24,3 +24,5 @@ $CFG['DBTABLE_ROLE'] = $CFG['DB_PREFIX'] . 'role';
 $CFG['DBTABLE_ROLEPERMISSION'] = $CFG['DB_PREFIX'] . 'role_permission';
 $CFG['DBTABLE_USER'] = $CFG['DB_PREFIX'] . 'user';
 $CFG['DBTABLE_USERROLE'] = $CFG['DB_PREFIX'] . 'user_role';
+$CFG['DBTABLE_CUSTOMER'] = $CFG['DB_PREFIX'] . 'customer';
+$CFG['DBTABLE_PROJECT'] = $CFG['DB_PREFIX'] . 'project';

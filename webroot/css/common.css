@@ -11,3 +11,33 @@ div.page_centered {
 ul.dropdown-menu li.divider:first-child {
 	display: none;
 }
+
+.panel-heading {
+  position: relative;
+}
+
+.tabs {
+  position: absolute;
+  bottom: -1px;
+  right: 300px;
+  margin: 0 !important;
+}
+
+.tabs > li {
+  margin-bottom: 0 !important;
+}
+
+.tabs > li.active > a, .tabs > li > a:hover {
+  background-color: #fff !important;
+}
+
+.tabs > li > a, .tabs > li.disabled > a, .tabs > li.disabled > a:hover {
+  color: inherit !important;
+  background-color: #eff2f7 !important;
+  border: 1px solid #eff2f7 !important;
+  border-radius: 4px 4px 0 0 !important;
+  margin-left: 4px;
+  margin-right: 0 !important;
+  border-bottom: 0 !important;
+}
+
