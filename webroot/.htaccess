@@ -1,0 +1,32 @@
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+
+	# In case it's not /, change this to your application URL path:
+	#RewriteBase /path/to/your/app/
+
+	# Prevent "SEO duplicate content" between your www and non-www domains:
+	## Redirect from non-www to www:
+	## no SSL:
+	#RewriteCond %{HTTP_HOST} ^yourdomain\.com$
+	#RewriteCond %{HTTPS} =off
+	#RewriteRule ^(.*)$ http://www.yourdomain.com/$1 [R=301,L]
+	## SSL:
+	#RewriteCond %{HTTP_HOST} ^yourdomain\.com$
+	#RewriteCond %{HTTPS} =on
+	#RewriteRule ^(.*)$ https://www.yourdomain.com/$1 [R=301,L]
+	## Redirect from www to non-www:
+	## no SSL:
+	#RewriteCond %{HTTP_HOST} ^www\.yourdomain\.com$
+	#RewriteCond %{HTTPS} =off
+	#RewriteRule ^(.*)$ http://yourdomain.com/$1 [R=301,L]
+	## SSL:
+	#RewriteCond %{HTTP_HOST} ^www\.yourdomain\.com$
+	#RewriteCond %{HTTPS} =on
+	#RewriteRule ^(.*)$ https://yourdomain.com/$1 [R=301,L]
+
+	# Framework:
+	RewriteCond $1 !^(favicon\.ico|robots\.txt)
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>

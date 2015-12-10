@@ -1,0 +1,22 @@
+div.permissions {
+}
+
+div.permissions div.permission_list {
+	display: none;
+}
+
+div.permissions div.permission_list label {
+	font-weight: inherit;
+	margin: 0px;
+}
+
+div.permissions div.permission_list dt {
+	padding: 2px 4px;
+	font-weight: normal;
+}
+
+div.permissions div.permission_list dt.hd {
+	background-color: #f9f9f9;
+	font-weight: bold;
+	padding-bottom: 7px;
+}

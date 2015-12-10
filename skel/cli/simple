@@ -1,0 +1,9 @@
+#!/usr/bin/env php
+<?php
+/**
+ * CLI Script
+ *
+ ******************************************************************************/
+require_once(dirname(__FILE__) . '/../cfg/bootstrap_cli.php');
+
+

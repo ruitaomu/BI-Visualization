@@ -1,0 +1,13 @@
+form.page_centered {
+	width: 300px;
+	margin: 5% auto 0;
+}
+
+div.page_centered {
+	width: 600px;
+	margin: 5% auto 0;
+}
+
+ul.dropdown-menu li.divider:first-child {
+	display: none;
+}
