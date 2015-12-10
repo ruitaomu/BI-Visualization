@@ -1,5 +1,0 @@
-domain: bi.dev
-hostname: bi.dev
-ruby_version: 2.2.1
-passenger_max_pool_size: 4
-passenger_min_instances: 2
