@@ -10,25 +10,25 @@
     		<input type="hidden" name="mode" value="creupd">
     		<fieldset>
     			<div class="control-group form-group">
-    				<label for="name" class="control-label col-lg-2 col-sm-2">{'Name'|i18n}</label>
-    				<div class="controls col-lg-10">
+    				<label for="name" class="control-label col-lg-2 col-md-2 col-sm-2">{'Name'|i18n}</label>
+    				<div class="controls col-lg-10 col-md-10 col-sm-10">
     					<input type="text" id="name" name="name" value="{$name}" maxlength="128" class="form-control">
     				</div>
     			</div>
     			<div class="control-group form-group">
-    				<label for="contact_name" class="control-label col-lg-2 col-sm-2">{'Contact name'|i18n}</label>
-    				<div class="controls col-lg-10">
+    				<label for="contact_name" class="control-label col-lg-2 col-md-2 col-sm-2">{'Contact Name'|i18n}</label>
+    				<div class="controls col-lg-10 col-md-10 col-sm-10">
     					<input type="text" id="contact_name" name="contact_name" value="{$contact_name}" maxlength="128" class="form-control">
     				</div>
     			</div>
     			<div class="control-group form-group">
-    				<label for="contact_email" class="control-label col-lg-2 col-sm-2">{'Contact e-mail'|i18n}</label>
-    				<div class="controls col-lg-10">
+    				<label for="contact_email" class="control-label col-lg-2 col-md-2 col-sm-2">{'Contact E-mail'|i18n}</label>
+    				<div class="controls col-lg-10 col-md-10 col-sm-10">
     					<input type="text" id="contact_email" name="contact_email" value="{$contact_email}" maxlength="128" class="form-control">
     				</div>
     			</div>
     			<div class="form-group">
-            <div class="col-lg-offset-2 col-lg-10">
+            <div class="col-lg-offset-2 col-md-offset-2 col-sm-offset-2 col-lg-10 col-md-10 col-sm-10">
     				  <button type="submit" class="btn btn-primary">{if $id}Update{else}Create{/if}</button>
     				  <a href="{href}" class="btn">{'Cancel'|i18n}</a>
             </div>

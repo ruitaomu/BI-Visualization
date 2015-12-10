@@ -17,19 +17,19 @@
     		<fieldset>
     			<div class="control-group form-group">
     				<label for="title" class="control-label col-lg-2 col-sm-2">{'Title'|i18n}</label>
-    				<div class="controls col-lg-10">
+    				<div class="controls col-lg-10 col-md-10 col-sm-10">
     					<input type="text" id="title" name="title" value="{$title}" maxlength="128" class="form-control">
     				</div>
     			</div>
     			<div class="control-group form-group">
-    				<label for="description" class="control-label col-lg-2 col-sm-2">{'Description'|i18n}</label>
-    				<div class="controls col-lg-10">
+    				<label for="description" class="control-label col-lg-2 col-md-2 col-sm-2">{'Description'|i18n}</label>
+    				<div class="controls col-lg-10 col-md-10 col-sm-10">
     					<textarea id="description" name="description" class="form-control" rows="4">{$description}</textarea>
     				</div>
     			</div>
     			<div class="control-group form-group">
-    				<label for="customer_id" class="control-label col-lg-2 col-sm-2">{'Customer'|i18n}</label>
-    				<div class="controls col-lg-10">
+    				<label for="customer_id" class="control-label col-lg-2 col-md-2 col-sm-2">{'Customer'|i18n}</label>
+    				<div class="controls col-lg-10 col-md-10 col-sm-10">
               <div class="input-group select2-bootstrap-append">
     					  <select id="customer_id" name="customer_id" class="form-control">
                   {html_options options=$customer_id_opt selected=$customer_id}
@@ -41,29 +41,29 @@
     				</div>
     			</div>
     			<div class="control-group form-group">
-    				<label for="game_type_id" class="control-label col-lg-2 col-sm-2">{'Game type'|i18n}</label>
-    				<div class="controls col-lg-10">
+    				<label for="game_type_id" class="control-label col-lg-2 col-md-2 col-sm-2">{'Game Type'|i18n}</label>
+    				<div class="controls col-lg-10 col-md-10 col-sm-10">
     					<select id="game_type_id" name="game_type_id" class="form-control">
                 {html_options options=$game_type_id_opt selected=$game_type_id}
               </select>
     				</div>
     			</div>
     			<div class="control-group form-group">
-    				<label for="game_version" class="control-label col-lg-2 col-sm-2">{'Game version'|i18n}</label>
-    				<div class="controls col-lg-10">
+    				<label for="game_version" class="control-label col-lg-2 col-md-2 col-sm-2">{'Game Version'|i18n}</label>
+    				<div class="controls col-lg-10 col-md-10 col-sm-10">
     					<input type="text" id="game_version" name="game_version" value="{$game_version}" maxlength="128" class="form-control">
     				</div>
     			</div>
     			<div class="control-group form-group">
-    				<label for="game_hardware_id" class="control-label col-lg-2 col-sm-2">{'Game hardware'|i18n}</label>
-    				<div class="controls col-lg-10">
+    				<label for="game_hardware_id" class="control-label col-lg-2 col-md-2 col-sm-2">{'Game Hardware'|i18n}</label>
+    				<div class="controls col-lg-10 col-md-10 col-sm-10">
     					<select id="game_hardware_id" name="game_hardware_id" class="form-control">
                 {html_options options=$game_hardware_id_opt selected=$game_hardware_id}
               </select>
     				</div>
     			</div>
     			<div class="form-group">
-            <div class="col-lg-offset-2 col-lg-10">
+            <div class="col-lg-offset-2 col-md-offset-2 col-sm-offset-2 col-lg-10 col-md-10 col-sm-10">
     				  <button type="submit" class="btn btn-primary">{if $id}Update{else}Next{/if}</button>
     				  <a href="{href}" class="btn">{'Cancel'|i18n}</a>
             </div>
