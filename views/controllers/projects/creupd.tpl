@@ -43,9 +43,14 @@
     			<div class="control-group form-group">
     				<label for="game_type_id" class="control-label col-lg-2 col-md-2 col-sm-2">{'Game Type'|i18n}</label>
     				<div class="controls col-lg-10 col-md-10 col-sm-10">
-    					<select id="game_type_id" name="game_type_id" class="form-control">
-                {html_options options=$game_type_id_opt selected=$game_type_id}
-              </select>
+              <div class="input-group select2-bootstrap-append">
+    					  <select id="game_type_id" name="game_type_id" class="form-control">
+                  {html_options options=$game_type_id_opt selected=$game_type_id}
+                </select>
+                <span class="input-group-btn">
+                  <a data-toggle="modal" href="#addGameType" class="btn btn-primary">Add New</a>
+                </span>
+              </div>
     				</div>
     			</div>
     			<div class="control-group form-group">
@@ -57,9 +62,14 @@
     			<div class="control-group form-group">
     				<label for="game_hardware_id" class="control-label col-lg-2 col-md-2 col-sm-2">{'Game Hardware'|i18n}</label>
     				<div class="controls col-lg-10 col-md-10 col-sm-10">
-    					<select id="game_hardware_id" name="game_hardware_id" class="form-control">
-                {html_options options=$game_hardware_id_opt selected=$game_hardware_id}
-              </select>
+              <div class="input-group select2-bootstrap-append">
+    					  <select id="game_hardware_id" name="game_hardware_id" class="form-control">
+                  {html_options options=$game_hardware_id_opt selected=$game_hardware_id}
+                </select>
+                <span class="input-group-btn">
+                  <a data-toggle="modal" href="#addGameHardware" class="btn btn-primary">Add New</a>
+                </span>
+              </div>
     				</div>
     			</div>
     			<div class="form-group">
@@ -113,6 +123,66 @@
     </div>
   </form>
 </div>
+<div aria-hidden="true" role="dialog" tabindex="-1" id="addGameType" class="modal fade">
+  <form id="add_game_type" method="post" action="{href controller='attributes' action='add-attribute'}" data-frwk-validation="attribute_model::default" data-frwk-submitfn="add_attribute">
+    <input type="hidden" name="name" value="game_type">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Add Game Type</h4>
+        </div>
+        <div class="modal-body">
+          <div class="form-group control-group">
+            <div class="controls">
+              <input type="text" name="value" placeholder="Game Type" class="form-control" maxlength="64">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="pull-left" style="margin-top: 7px;">
+            <span class="x-state x-state_loading" style="display: none;">
+              <img src="{$BASE}/img/ajax-loader.gif">
+              {'Please wait...'|i18n}
+            </span>
+          </div>
+          <button data-dismiss="modal" class="btn btn-default" type="button">Cancel</button>
+          <button class="btn btn-primary" type="submit">Add Game Type</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div aria-hidden="true" role="dialog" tabindex="-1" id="addGameHardware" class="modal fade">
+  <form id="add_game_hardware" method="post" action="{href controller='attributes' action='add-attribute'}" data-frwk-validation="attribute_model::default" data-frwk-submitfn="add_attribute">
+    <input type="hidden" name="name" value="game_hardware">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Add Game Hardware</h4>
+        </div>
+        <div class="modal-body">
+          <div class="form-group control-group">
+            <div class="controls">
+              <input type="text" name="value" placeholder="Game Hardware" class="form-control" maxlength="64">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="pull-left" style="margin-top: 7px;">
+            <span class="x-state x-state_loading" style="display: none;">
+              <img src="{$BASE}/img/ajax-loader.gif">
+              {'Please wait...'|i18n}
+            </span>
+          </div>
+          <button data-dismiss="modal" class="btn btn-default" type="button">Cancel</button>
+          <button class="btn btn-primary" type="submit">Add Game Hardware</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
 {/block}
 {block name='foot' append}
 <script type="text/javascript" src="{$BASE}/lib/select2/select2.js"></script>
@@ -128,13 +198,44 @@
   function add_customer() {
     FRWK.Forms.ajax_submit(this, function(json) {
       if (json.ok) {
-        var $option = $('<option></option>').val(json.data.id).text(json.data.name);
-        $('#customer_id').append($option).select2('val', json.data.id);
+        add_option($('#customer_id'), json.data.id, json.data.name);
         $('#addCustomer').modal('hide');
       }
     });
 
     return false;
+  }
+  
+  function add_attribute() {
+    var $form = $(this);
+    var name = $form.find('input[name="name"]').val();
+    var value = $form.find('input[name="value"]').val();
+
+
+    $.post($form.attr('action'), { name: name, value: value }, function(response) {
+      response = JSON.parse(response);
+      if (typeof(response) == 'number' && response > 0) {
+        var $modal = $form.closest('.modal');
+        var select;
+        switch ($modal.attr('id')) {
+          case 'addGameType': select = '#game_type_id'; break;
+          case 'addGameHardware': select = '#game_hardware_id'; break;
+        }
+
+        add_option($(select), response, value);
+        $modal.modal('hide');
+      }
+      else {
+        FRWK.Forms.show_errors($form[0], response);
+      }
+    });
+
+    return false;
+  }
+
+  function add_option($select, id, text) {
+    var $option = $('<option></option>').val(id).text(text);
+    $select.append($option).select2('val', id);
   }
 </script>
 {/block}
