@@ -5,9 +5,9 @@ CREATE TABLE project (
   title varchar(128) not null default '',
   description text,
   customer_id int unsigned not null default 0,
-  game_type varchar(32) not null default '',
+  game_type_id int unsigned not null default 0,
   game_version varchar(8) not null default '',
-  hardware varchar(32) not null default '',
+  game_hardware_id int unsigned not null default 0,
 
   num_testers int unsigned not null default 0,
 
