@@ -40,10 +40,21 @@
                     click to upload video
                   </div>
                 </div>
-                <div style="margin-top: 10px; text-align: center; background-color: #f5f6f8; padding: 5px;">
-                  <i class="fa fa-paperclip fa-2x"></i>
-                  <br>
-                  click to upload index file
+                <div class="row" style="margin-top: 10px;">
+                  <div class="col-lg-6 col-md-6 col-sm-6">
+                    <div style="text-align: center; background-color: #f5f6f8; padding: 5px;">
+                      <i class="fa fa-paperclip fa-2x"></i>
+                      <br>
+                      upload index file
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-md-6 col-sm-6">
+                    <div style="text-align: center; background-color: #f5f6f8; padding: 5px;">
+                      <i class="fa fa-tags fa-2x"></i>
+                      <br>
+                      upload tags file
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
