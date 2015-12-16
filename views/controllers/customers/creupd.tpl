@@ -3,7 +3,7 @@
 <section class="wrapper">
   <section class="panel">
     <div class="panel-heading">
-	    <span class="lead">{if $id gt 0}{'Update Customer'|i18n} - {$name}{else}{'Create Customer'|i18n}{/if}</span>
+	    <span class="lead">{if $id gt 0}{'Customers'|i18n} | {$name}{else}{'Create Customer'|i18n}{/if}</span>
     </div>
     <div class="panel-body">
     	<form id="creupd" method="post" class="form-horizontal" autocomplete="off" data-frwk-validation="customer_model::default" {if $id gt 0}data-frwk-mode="upd"{/if}>

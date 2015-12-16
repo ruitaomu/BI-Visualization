@@ -9,7 +9,7 @@
 				<li id="topnav_dashboard"><a href="{href controller='dashboard'}">{'Dashboard'|i18n}</a></li>
 				<li id="topnav_customers"><a href="{href controller='customers'}">{'Customers'|i18n}</a></li>
 				<li id="topnav_projects"><a href="{href controller='projects'}">{'Projects'|i18n}</a></li>
-				<li id="topnav_testers"><a href="javascript:;">{'Testers'|i18n}</a></li>
+				<li id="topnav_testers"><a href="{href controller='testers'}">{'Testers'|i18n}</a></li>
 				{if $SESSION.user_info.type eq 1}
 				<li id="topnav_employees"><a href="{href controller='employees'}">{'Employees'|i18n}</a></li>
 				<li id="topnav_settings" class="dropdown">

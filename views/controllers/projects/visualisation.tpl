@@ -8,7 +8,7 @@
   {flash}
   <section class="panel">
     <div class="panel-heading">
-	    <span class="lead">Projects - {$title}</span>
+	    <span class="lead">Projects | {$title}</span>
       {include file='controllers/projects/tabs.tpl'}
     </div>
     <div class="panel-body">

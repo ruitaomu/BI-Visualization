@@ -41,3 +41,37 @@ ul.dropdown-menu li.divider:first-child {
   border-bottom: 0 !important;
 }
 
+.pdata > .panel {
+  background-color: #fafafa;
+}
+
+.pdata > .new {
+  display: none;
+  position: absolute;
+  text-align: center;
+  width: 100%;
+  margin-left: -15px;
+  top: 50%;
+  margin-top: -99px;
+}
+
+.pdata > .new > span {
+  font-size: 120px;
+  line-height: 120px;
+  font-weight: 200;
+}
+
+.pdata:first-child {
+  cursor: pointer;
+}
+
+.pdata:first-child > .new {
+  display: block;
+}
+
+.pdata:first-child > .panel .panel-heading {
+  border-color: transparent;
+}
+.pdata:first-child > .panel .content {
+  visibility: hidden;
+}

@@ -8,7 +8,7 @@
   {flash}
   <section class="panel">
     <div class="panel-heading">
-	    <span class="lead">{if $id gt 0}{'Projects'|i18n} - {$title}{else}{'Create Project'|i18n}{/if}</span>
+	    <span class="lead">{if $id gt 0}{'Projects'|i18n} | {$title}{else}{'Create Project'|i18n}{/if}</span>
       {include file='controllers/projects/tabs.tpl'}
     </div>
     <div class="panel-body">
