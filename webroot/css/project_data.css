@@ -1,0 +1,118 @@
+div.data-widget div.panel {
+  background-color: #fafafa;
+}
+
+div.data-widget span.tester-name {
+  line-height: 34px;
+}
+
+div.data-widget.empty span.tester-name {
+  display: none;
+}
+
+div.data-widget div.tester-select {
+  display: none;
+}
+
+div.data-widget.empty div.tester-select {
+  display: block;
+}
+
+div.data-widget div.delete {
+  float: right;
+  margin-top: 6px;
+}
+
+div.data-widget.empty div.delete {
+  display: none;
+}
+
+div.data-widget div.file-control {
+  background-color: #f5f6f8;
+  border: none;
+  width: 100%;
+  height: 100%;
+}
+
+div.data-widget div.placeholder {
+  text-align: center;
+  padding: 10px;
+}
+
+div.data-widget div.placeholder span {
+  display: block;
+}
+
+div.data-widget div.file-control-video div.placeholder {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  margin-top: -52px;
+}
+
+div.data-widget div.block {
+  background-color: #f5f6f8;
+  margin-top: 15px;
+  min-height: 64px;
+}
+
+div.data-widget.has-video div.file-control-video {
+  display: none;
+}
+
+div.data-widget.has-index div.block-index div.file-control {
+  display: none;
+}
+
+div.data-widget.has-tags div.block-tags div.file-control {
+  display: none;
+}
+
+div.data-widget.empty div.panel-body {
+  visibility: hidden;
+}
+
+div.data-widget div.add {
+  display: none;
+  position: absolute;
+  text-align: center;
+  width: 100%;
+  margin-left: -15px;
+  top: 50%;
+  margin-top: -99px;
+}
+
+div.data-widget > div.add span {
+  font-size: 120px;
+  line-height: 120px;
+  font-weight: 200;
+}
+
+div.data-widget div.upload-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  border-bottom: 5px solid #f77b6f;
+  width: 0;
+}
+
+div.data-widget:first-child {
+  cursor: pointer;
+}
+
+div.data-widget:first-child div.add {
+  display: block;
+}
+
+div.data-widget:first-child div.panel-heading, div.data-widget:first-child div.panel-body {
+  visibility: hidden;
+}
+
+.fileinput-button input {
+  border-width: 0px 0px 500px 500px !important;
+  z-index: 1;
+}
+
+.fileinput-button.uploading input {
+  z-index: -1;
+}

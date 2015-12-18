@@ -27,3 +27,4 @@ $CFG['DBTABLE_USERROLE'] = $CFG['DB_PREFIX'] . 'user_role';
 $CFG['DBTABLE_CUSTOMER'] = $CFG['DB_PREFIX'] . 'customer';
 $CFG['DBTABLE_PROJECT'] = $CFG['DB_PREFIX'] . 'project';
 $CFG['DBTABLE_TESTER'] = $CFG['DB_PREFIX'] . 'tester';
+$CFG['DBTABLE_PROJECTTESTER'] = $CFG['DB_PREFIX'] . 'project_tester';

@@ -109,8 +109,17 @@ class projects_controller extends front_controller {
 			}
 
       $this->set($this->model->get());
-      $this->set('data', array(1));
-      $this->set('tester_id_opt', tester_model::get_opt('id', "CONCAT(first_name, ' ', last_name)"));
+
+      // get project testers:
+      $this->set('testers', $this->model->get_testers());
+
+      // get all available testers:
+      $testers_opt = tester_model::get_opt('id', "CONCAT(first_name, ' ', last_name)");
+      $available_testers = array();
+      foreach ($testers_opt as $tester_id => $tester_name) {
+        $available_testers[] = array('id' => $tester_id, 'text' => $tester_name);
+      }
+      $this->set('available_testers_json', json_encode($available_testers));
 		}
   }
 
@@ -127,6 +136,54 @@ class projects_controller extends front_controller {
 			}
 
       $this->set($this->model->get());
+		}
+  }
+
+  public function action_add_tester() {
+		$id = $this->params->get('id', 0);
+		$this->model->load($id);
+
+		if ($id > 0) {
+			if (!$this->model->exists() || !$this->model->access_allowed()) {
+				return response::access_denied();
+			}
+
+      $this->model->add_tester($this->params->tester_id);
+
+			return response::ajax_success();
+		}
+  }
+
+  public function action_del_tester() {
+		$id = $this->params->get('id', 0);
+		$this->model->load($id);
+
+		if ($id > 0) {
+			if (!$this->model->exists() || !$this->model->access_allowed()) {
+				return response::access_denied();
+			}
+
+      $this->model->del_tester($this->params->tester_id, $this->params->what);
+
+			return response::ajax_success();
+		}
+  }
+
+  public function action_set_video_hashed_id() {
+		$id = $this->params->get('id', 0);
+		$this->model->load($id);
+
+		if ($id > 0) {
+			if (!$this->model->exists() || !$this->model->access_allowed()) {
+				return response::access_denied();
+			}
+
+      $tester_id = $this->params->tester_id;
+      $video_hashed_id = $this->params->video_hashed_id;
+
+      $this->model->set_video_hashed_id($tester_id, $video_hashed_id);
+
+			return response::ajax_success();
 		}
   }
 
