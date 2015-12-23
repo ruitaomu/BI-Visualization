@@ -108,6 +108,17 @@ class project_model extends app_model {
       }
     }
 
+    // delete tags file:
+    if ($what == 'tags' || $what == 'all') {
+      $tb_tag = tb('tag');
+      $this->query("DELETE FROM $tb_tag WHERE project_tester_id = '$info[id]'");
+
+      if ($what != 'all') {
+        $hash = array('tags_file' => '');
+        $this->db()->update_record($hash, $tb, "id = '$info[id]'");
+      }
+    }
+
     // delete record:
     if ($what == 'all') {
       $this->db()->query("DELETE FROM $tb WHERE id = '$info[id]'");
@@ -200,6 +211,56 @@ class project_model extends app_model {
 
       return true;
     }
+  }
+
+  /**
+   * Upload tags file.
+   */
+  public function upload_tags($tester_id, $id = null) {
+    if (!($id = $this->require_id($id))) {
+      return false;
+    }
+
+    $tb = tb('project_tester');
+    $where_str = "project_id = '$id' AND tester_id = :tester_id";
+    $_id = $this->db()->get_fields('id', $tb, $where_str, array(
+      'tester_id' => $tester_id
+    ));
+
+    $f = fopen($_FILES['file']['tmp_name'], 'r');
+    $header = null;
+    $tags = array();
+    while (($row = fgetcsv($f, 1024)) !== false) {
+      if (!$header) {
+        $header = $row;
+      }
+      else {
+        $tag = explode('-', $row[7]);
+        $tagseq = "$tag[0]-$tag[1]";
+        $tags[$tagseq]['tag'] = $tag[0];
+        $tags[$tagseq]['seq'] = $tag[1];
+        $tags[$tagseq]["t_$tag[2]"] = $row[4];
+      }
+    }
+    fclose($f);
+
+    $tb_tag = tb('tag');
+    foreach ($tags as $tag) {
+      $tag['project_tester_id'] = $_id;
+      $tag['project_id'] = $id;
+      $tag['tester_id'] = $tester_id;
+
+      $this->db()->add_record($tag, $tb_tag);
+    }
+
+    $hash = array(
+      'tester_id' => $tester_id,
+      'tags_file' => '1'
+    );
+    $where_str = "project_id = '$id' AND tester_id = :tester_id";
+    $this->db()->update_record($hash, $tb, $where_str);
+
+    return true;
   }
 
 	//////////////////////////////////////////////////////////////////////////////

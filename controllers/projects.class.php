@@ -212,6 +212,26 @@ class projects_controller extends front_controller {
 		}
   }
 
+  public function action_upload_tags() {
+		$id = $this->params->get('id', 0);
+		$this->model->load($id);
+
+		if ($id > 0) {
+			if (!$this->model->exists() || !$this->model->access_allowed()) {
+				return response::access_denied();
+			}
+
+      $result = $this->model->upload_tags($this->params->tester_id);
+
+      if ($result !== true) {
+        return response::ajax_error($result);
+      }
+      else {
+			  return response::ajax_success();
+      }
+		}
+  }
+
 	//////////////////////////////////////////////////////////////////////////////
 	//
 	// Private Methods

@@ -13,7 +13,7 @@
             <ul class="dropdown-menu dropdown-menu-right">
               <li><a href="javascript:;" data-delete="video">Delete video</a></li>
               <li><a href="javascript:;" data-delete="index">Delete index file</a></li>
-              <li><a href="javascript:;">Delete tags file</a></li>
+              <li><a href="javascript:;" data-delete="tags">Delete tags file</a></li>
               <li class="divider"></li>
               <li><a href="javascript:;" data-delete="all">Delete Everything</a></li>
             </ul>
@@ -65,6 +65,7 @@
             <i class="fa fa-check fa-2x"></i>
             <span>tags file uploaded</span>
           </div>
+          <div class="upload-progress"></div>
         </div>
       </div>
     </div>
