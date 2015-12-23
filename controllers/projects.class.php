@@ -120,6 +120,11 @@ class projects_controller extends front_controller {
         $available_testers[] = array('id' => $tester_id, 'text' => $tester_name);
       }
       $this->set('available_testers_json', json_encode($available_testers));
+
+      // get the supposed order of index file columns:
+      $index_data = attribute_model::values('index_data');
+      array_unshift($index_data, 'Time');
+      $this->set('index_cols', implode(', ', $index_data));
 		}
   }
 
@@ -184,6 +189,26 @@ class projects_controller extends front_controller {
       $this->model->set_video_hashed_id($tester_id, $video_hashed_id);
 
 			return response::ajax_success();
+		}
+  }
+
+  public function action_upload_index() {
+		$id = $this->params->get('id', 0);
+		$this->model->load($id);
+
+		if ($id > 0) {
+			if (!$this->model->exists() || !$this->model->access_allowed()) {
+				return response::access_denied();
+			}
+
+      $result = $this->model->upload_index($this->params->tester_id);
+
+      if ($result !== true) {
+        return response::ajax_error($result);
+      }
+      else {
+			  return response::ajax_success();
+      }
 		}
   }
 

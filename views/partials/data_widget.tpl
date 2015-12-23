@@ -1,4 +1,4 @@
-<div class="data-widget {if $t}added{/if} {if $t.wistia_video_hashed_id}has-video{/if} col-lg-3 col-md-4 col-sm-6">
+<div class="data-widget {if $t}added{/if} {if $t.wistia_video_hashed_id}has-video{/if} {if $t.index_file}has-index{/if} {if $t.tags_file}has-tags{/if} col-lg-3 col-md-4 col-sm-6">
   <div class="add"><span>+</span><br>click to add project data</div>
   <form data-action-add-tester="{href action='add-tester'}?id={$id}" data-action-del-tester="{href action='del-tester'}?id={$id}" data-action-set-video-hashed-id="{href action='set-video-hashed-id'}?id={$id}" {if $t}data-tester_id="{$t.tester_id}"{/if}>
     <div class="panel">
@@ -12,7 +12,7 @@
             <a href="javascript:;" data-toggle="dropdown"><i class="fa fa-trash-o"></i></a>
             <ul class="dropdown-menu dropdown-menu-right">
               <li><a href="javascript:;" data-delete="video">Delete video</a></li>
-              <li><a href="javascript:;">Delete index file</a></li>
+              <li><a href="javascript:;" data-delete="index">Delete index file</a></li>
               <li><a href="javascript:;">Delete tags file</a></li>
               <li class="divider"></li>
               <li><a href="javascript:;" data-delete="all">Delete Everything</a></li>
@@ -39,21 +39,31 @@
 
         <div class="block block-index">
           <div class="file-control fileinput-button">
-            <input type="file" class="fileupload">
+            <input type="file" class="fileupload" name="file" data-url="{href action='upload-index'}?id={$id}">
             <div class="placeholder">
               <i class="fa fa-paperclip fa-2x"></i>
               <span>upload index file</span>
             </div>
+            <a href="javascript:;" class="info" data-toggle="tooltip" data-placement="top" data-html="true" title="The file should be in CSV format with the following columns:<br>{$index_cols}"><i class="fa fa-info-circle"></i></a>
           </div>
+          <div class="uploaded placeholder">
+            <i class="fa fa-check fa-2x"></i>
+            <span>index file uploaded</span>
+          </div>
+          <div class="upload-progress"></div>
         </div>
 
         <div class="block block-tags">
           <div class="file-control fileinput-button">
-            <input type="file" class="fileupload">
+            <input type="file" class="fileupload" name="file" data-url="{href action='upload-tags'}?id={$id}">
             <div class="placeholder">
               <i class="fa fa-tags fa-2x"></i>
               <span>upload tags file</span>
             </div>
+          </div>
+          <div class="uploaded placeholder">
+            <i class="fa fa-check fa-2x"></i>
+            <span>tags file uploaded</span>
           </div>
         </div>
       </div>

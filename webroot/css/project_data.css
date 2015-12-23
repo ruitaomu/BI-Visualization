@@ -34,6 +34,14 @@ div.data-widget div.file-control {
   height: 100%;
 }
 
+div.data-widget .info {
+  position: absolute;
+  top: 23px;
+  right: 10px;
+  z-index: 2;
+  color: #797979;
+}
+
 div.data-widget div.placeholder {
   text-align: center;
   padding: 10px;
@@ -51,9 +59,14 @@ div.data-widget div.file-control-video div.placeholder {
 }
 
 div.data-widget div.block {
+  position: relative;
   background-color: #f5f6f8;
   margin-top: 15px;
   min-height: 64px;
+}
+
+div.data-widget div.block div.uploaded {
+  display: none;
 }
 
 div.data-widget.has-video div.file-control-video {
@@ -64,8 +77,16 @@ div.data-widget.has-index div.block-index div.file-control {
   display: none;
 }
 
+div.data-widget.has-index div.block-index div.uploaded {
+  display: block;
+}
+
 div.data-widget.has-tags div.block-tags div.file-control {
   display: none;
+}
+
+div.data-widget.has-tags div.block-tags div.uploaded {
+  display: block;
 }
 
 div.data-widget.empty div.panel-body {

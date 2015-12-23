@@ -6,6 +6,10 @@
       if (!$el.is('.has-video')) {
         setupVideoUpload($el);
       }
+      
+      if (!$el.is('.has-index')) {
+        setupIndexUpload($el);
+      }
     });
 
     // add a new tester input widget to the UI:
@@ -65,6 +69,10 @@
         }
       });
     });
+
+    $('[data-toggle="tooltip"]').tooltip({
+      'container': 'body'
+    });
   });
 
   function setupVideoUpload($el) {
@@ -97,7 +105,7 @@
       done: function(e, data) {
         var id = data.result.hashed_id;
 
-        var embed = '<div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;"><div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;"><iframe src="//fast.wistia.net/embed/iframe/' + id + '?videoFoam=true" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" allowfullscreen mozallowfullscreen webkitallowfullscreen oallowfullscreen msallowfullscreen width="100%" height="100%"></iframe></div></div>';
+        var embed = '<iframe src="//fast.wistia.net/embed/iframe/' + id + '" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" allowfullscreen mozallowfullscreen webkitallowfullscreen oallowfullscreen msallowfullscreen width="100%" height="100%"></iframe>';
 
         // save the video id:
         var $form = data.context.$el.find('form');
@@ -148,9 +156,64 @@
           });
         }
       }
-    }).on('fileuploadprocessalways', function (e, data) {
-      console.log(data);
     });
+  }
+
+  function setupIndexUpload($el) {
+    $el.find('.block-index input')
+    .fileupload({
+      add: function(e, data) {
+        var file = data.files[0];
+
+        var $_el = $el.find('.block-index');
+        var $file_control = $_el.find('.file-control');
+
+        if (!(/(\.|\/)(csv)$/i).test(file.name)) {
+          showError($file_control, 'please select a CSV file');
+          return;
+        }
+
+        clearError($file_control, '');
+
+        data.context = {
+          '$el': $el,
+          '$progresstext': $_el.find('.file-control .placeholder span'),
+          '$progressbar': $_el.find('.upload-progress'),
+          '$file_control': $file_control
+        };
+
+        $_el.find('.fileinput-button').addClass('uploading');
+
+        data.formData = {tester_id: $el.find('form').attr('data-tester_id')};
+
+        data.submit();
+      },
+
+      progress: showUploadProgress,
+
+      done: function(e, data) {
+        var result = JSON.parse(data.result);
+
+        data.context.$progressbar.css('width', 0);
+        data.context.$el.find('.block-index .fileinput-button').removeClass('uploading');
+
+        if (result.ok) {
+          data.context.$el.addClass('has-index');
+          data.context.$progresstext.text('upload index file');
+        }
+        else {
+          showError(data.context.$file_control, result.errors);
+        }
+      }
+    });
+  }
+
+  function showError($file_control, text) {
+    $file_control.find('span').text(text).addClass('text-danger');
+  }
+
+  function clearError($file_control, text) {
+    $file_control.find('span').text(text).removeClass('text-danger');
   }
 
   function showUploadProgress(e, data) {
@@ -204,9 +267,10 @@
         if (json.ok) {
           $el.find('.tester-name').text(data.text);
           $form.attr('data-tester_id', data.id);
-          $el.removeClass('empty').addClass('added');
+          $el.removeClass('empty new').addClass('added');
           
           setupVideoUpload($el);
+          setupIndexUpload($el);
         }
       }
     });
