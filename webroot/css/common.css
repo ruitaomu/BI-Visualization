@@ -40,3 +40,40 @@ ul.dropdown-menu li.divider:first-child {
   margin-right: 0 !important;
   border-bottom: 0 !important;
 }
+
+.tags {
+  position: relative;
+  height: 40px;
+}
+
+.tags > div {
+  position: absolute;
+  top: 0;
+  height: 100%;
+}
+
+.legend {
+  margin-top: 5px;
+  padding
+}
+
+.legend li {
+  position: relative;
+  cursor: pointer;
+}
+
+.legend li.is-hidden {
+  text-decoration: line-through;
+}
+
+.legend div {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  margin-right: 3px;
+  vertical-align: middle;
+}
+
+.visualisation > div.row {
+  margin-bottom: 20px;
+}

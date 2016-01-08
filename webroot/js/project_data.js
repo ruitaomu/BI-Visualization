@@ -172,8 +172,8 @@
         var $_el = $el.find('.block-index');
         var $file_control = $_el.find('.file-control');
 
-        if (!(/(\.|\/)(csv)$/i).test(file.name)) {
-          showError($file_control, 'please select a CSV file');
+        if (!(/(\.|\/)(xls|xlsx)$/i).test(file.name)) {
+          showError($file_control, 'please select an Excel file');
           return;
         }
 

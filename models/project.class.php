@@ -3,6 +3,7 @@
  * project model
  *
  ******************************************************************************/
+require($CFG['ROOT_DIR'] . '/include/vendors/PHPExcel-1.8.1/Classes/PHPExcel/IOFactory.php');
 
 class project_model extends app_model {
 	protected $validation_sets = array(
@@ -65,6 +66,33 @@ class project_model extends app_model {
     $this->save(array(':num_testers' => 'num_testers + 1'));
 
     return true;
+  }
+
+  /**
+   * Get the testers of this project.
+   */
+  public function get_testers_opt($id = null) {
+    if (!($id = $this->require_id($id))) {
+      return false;
+    }
+
+    $tb = tb('project_tester');
+    $tb_tester = tb('tester');
+
+    $qstr = implode(' ', array(
+      "SELECT t2.id, CONCAT(t2.first_name, ' ', t2.last_name) AS name",
+      "FROM $tb AS t1, $tb_tester AS t2",
+      "WHERE t1.project_id = '$id' AND t2.id = t1.tester_id"
+    ));
+    $q = $this->query($qstr);
+
+    $results = array();
+
+    while (is_array($res = $q->getrow())) {
+      $results[$res['id']] = $res['name'];
+    }
+
+    return $results;
   }
 
   /**
@@ -150,7 +178,7 @@ class project_model extends app_model {
   /**
    * Get all testers for a project.
    */
-  public function get_testers($id = null) {
+  public function get_testers($tester_id = null, $id = null) {
     if (!($id = $this->require_id($id))) {
       return array();
     }
@@ -161,9 +189,10 @@ class project_model extends app_model {
       "SELECT t1.*, CONCAT(t2.first_name, ' ', t2.last_name) AS name ",
       "FROM $tb AS t1, $tb_tester AS t2",
       "WHERE t1.project_id = '$id' AND t2.id = t1.tester_id",
+      (!is_null($tester_id) ? 'AND t1.tester_id = :tester_id' : ''),
       "ORDER BY t1.id DESC"
     ));
-    $q = $this->query($qstr);
+    $q = $this->query($qstr, array('tester_id' => $tester_id));
     $results = [];
     while (is_array($res = $q->getrow())) {
       $results[] = $res;
@@ -186,21 +215,11 @@ class project_model extends app_model {
       'tester_id' => $tester_id
     ));
 
-    $src = $_FILES['file']['tmp_name'];
+    if ($this->valid_index_file($_FILES['file'])) {
+      $ext = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
+      $dst = $this->frwk->cfg['ROOT_DIR'] . "/data/index_files/$_id.$ext";
 
-    $cols = attribute_model::values('index_data');
-    $n = count($cols) + 1;
-
-    $file = file($src);
-    $row = str_getcsv($file[0]);
-
-    if (count($row) != $n) {
-      return 'file doesn\'t match index attributes';
-    }
-    else {
-      $dst = $this->frwk->cfg['ROOT_DIR'] . "/data/index_files/$_id.csv";
-
-      move_uploaded_file($src, $dst);
+      move_uploaded_file($_FILES['file']['tmp_name'], $dst);
 
       $hash = array(
         'tester_id' => $tester_id,
@@ -210,6 +229,9 @@ class project_model extends app_model {
       $this->db()->update_record($hash, $tb, $where_str);
 
       return true;
+    }
+    else {
+      return 'file doesn\'t match index attributes';
     }
   }
 
@@ -229,17 +251,36 @@ class project_model extends app_model {
 
     $f = fopen($_FILES['file']['tmp_name'], 'r');
     $header = null;
+    $tag_sequences = array();
     $tags = array();
     while (($row = fgetcsv($f, 1024)) !== false) {
       if (!$header) {
         $header = $row;
       }
       else {
-        $tag = explode('-', $row[7]);
-        $tagseq = "$tag[0]-$tag[1]";
-        $tags[$tagseq]['tag'] = $tag[0];
-        $tags[$tagseq]['seq'] = $tag[1];
-        $tags[$tagseq]["t_$tag[2]"] = $row[4];
+        $tag_arr = explode('-', $row[7]);
+        $tag = $tag_arr[0];
+
+        if (!isset($tag_sequences[$tag])) {
+          $tag_sequences[$tag] = 0;
+        }
+
+        switch (count($tag_arr)) {
+        case 2:
+          $type = $tag_arr[1];
+          $seq = ($type == 's' ? ++$tag_sequences[$tag] : $tag_sequences[$tag]);
+          break;
+
+        case 3:
+          $seq = $tag_arr[1];
+          $type = $tag_arr[2];
+          break;
+        }
+
+        $tagseq = "$tag-$seq";
+        $tags[$tagseq]['tag'] = $tag;
+        $tags[$tagseq]['seq'] = $seq;
+        $tags[$tagseq]["t_$type"] = $row[4];
       }
     }
     fclose($f);
@@ -263,6 +304,92 @@ class project_model extends app_model {
     return true;
   }
 
+  /**
+   * Get tags for a tester on this project.
+   */
+  public function get_tags($tester_id, $id = null) {
+    if (!($id = $this->require_id($id))) {
+      return false;
+    }
+
+    $tb = tb('tag');
+    $qstr = implode(' ', array(
+      "SELECT *",
+      "FROM $tb",
+      "WHERE project_id = '$id' AND tester_id = :tester_id",
+      "ORDER BY tag, seq"
+    ));
+    $q = $this->query($qstr, array('tester_id' => $tester_id));
+
+    $results = array('tag' => array());
+    while (is_array($res = $q->getrow())) {
+      if (!isset($results['min_ts']) || $results['min_ts'] > $res['t_s']) {
+        $results['min_ts'] = $res['t_s'];
+      }
+      if (!isset($results['max_ts']) || $results['max_ts'] < $res['t_e']) {
+        $results['max_ts'] = $res['t_e'];
+      }
+
+      if (!isset($results['tag'][$res['tag']])) {
+        $results['tag'][$res['tag']] = array();
+      }
+
+      $results['tag'][$res['tag']][] = array(
+        'seq' => $res['seq'],
+        't_s' => $res['t_s'],
+        't_e' => $res['t_e']
+      );
+    }
+
+    return $results;
+  }
+
+  /**
+   * Get index data for a tester on this project.
+   */
+  public function get_index_data($tester_id, $id = null) {
+    if (!($id = $this->require_id($id))) {
+      return false;
+    }
+
+    $tb = tb('project_tester');
+    $where_str = "project_id = '$id' AND tester_id = :tester_id";
+    $info = $this->db()->get_fields('*', $tb, $where_str, array(
+      'tester_id' => $tester_id
+    ));
+
+    if ($info['index_file'] !== '1') {
+      return null;
+    }
+
+    $ext = 'xlsx';
+    $path = $this->frwk->cfg['ROOT_DIR'] . "/data/index_files/$info[id].$ext";
+    $objPHPExcel = PHPExcel_IOFactory::load($path);
+    foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
+      $data = $worksheet->toArray();
+      if (count($data) > 1) {
+        $results = array();
+        $header = null;
+
+        foreach ($data as $row) {
+          if (is_null($header)) {
+            $header = $row;
+            for ($i = 0; $i < count($header); $i++) {
+              $results[strtolower($header[$i])] = array($header[$i]);
+            }
+          }
+          else {
+            for ($i = 0; $i < count($row); $i++) {
+              $results[$header[$i]][] = $row[$i];
+            }
+          }
+        }
+
+        return $results;
+      }
+    }
+  }
+
 	//////////////////////////////////////////////////////////////////////////////
 	//
 	// Collection Methods
@@ -276,6 +403,14 @@ class project_model extends app_model {
 	//
 	//////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * Check if an index file is valid (i.e.: the number of columns matches the
+   * number of index attributes defined).
+   */
+  private function valid_index_file($file) {
+    $cols = attribute_model::values('index_data');
+    return true;
+  }
 
 	//////////////////////////////////////////////////////////////////////////////
 	//
