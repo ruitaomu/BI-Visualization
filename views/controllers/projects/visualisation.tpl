@@ -54,6 +54,7 @@
             <hr>
             {if $tester_data.index_file eq 1}
               <div id="charts"></div>
+              <div id="loader" style="text-align: center;"><i class="fa fa-spinner fa-spin"></i> loading charts, please wait...</div>
             {else}
               There's no index file uploaded for this tester, please upload one from the Data tab.
             {/if}
@@ -110,6 +111,7 @@
     });
 
     // generate the index data charts:
+    setTimeout(function() {
     if (index_data) {
       var $charts = $('#charts'), charts = {};
       for (var i = 0; i < index_attr.length; i++) {
@@ -129,11 +131,15 @@
             },
             color: {
               pattern: [randomColor()]
+            },
+            onrendered: function() {
+              $('#loader').hide();
             }
           });
         }
       }
     }
+    }, 500);
 
     $('#tester_id').change(function() {
       var url = "{href action='visualisation'}?id={$id}" + '&tester_id=' + $(this).val();
