@@ -36,7 +36,7 @@
         {/if}
         <div class="row">
           <div class="col-lg-12 col-md-12 col-sm-12">
-            <h2>Tags</h2>
+            Tags (incomplete for next milestone review)
             <hr>
             {if $tester_data.tags_file eq 1}
               <div style="margin: 0 12px 0 62px;" class="xx">
@@ -50,7 +50,7 @@
         </div>
         <div class="row">
           <div class="col-lg-12 col-md-12 col-sm-12">
-            <h2>Index Data</h2>
+            Index Data
             <hr>
             {if $tester_data.index_file eq 1}
               <div id="charts"></div>
