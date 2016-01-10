@@ -36,7 +36,7 @@
         {/if}
         <div class="row">
           <div class="col-lg-12 col-md-12 col-sm-12">
-            Tags (incomplete for next milestone review)
+            <span style="font-size: 15px;">Tags</span> (incomplete for next milestone review)
             <hr>
             {if $tester_data.tags_file eq 1}
               <div style="margin: 0 12px 0 62px;" class="xx">
@@ -50,7 +50,7 @@
         </div>
         <div class="row">
           <div class="col-lg-12 col-md-12 col-sm-12">
-            Index Data
+            <span style="font-size: 15px;">Index Data</span>
             <hr>
             {if $tester_data.index_file eq 1}
               <div id="charts"></div>
@@ -86,11 +86,7 @@
     var max_ts = tags.max_ts * 1 - tags.min_ts * 1;
     var tags_color = {};
     for (var tag in tags.tag) {
-      tags_color[tag] = [
-        Math.floor(Math.random() * 256),
-        Math.floor(Math.random() * 256),
-        Math.floor(Math.random() * 256)
-      ];
+      tags_color[tag] = randomColor(true);
 
       for (var i = 0; i < tags.tag[tag].length; i++) {
         t_s = tags.tag[tag][i].t_s * 1 - tags.min_ts * 1;
@@ -130,6 +126,9 @@
             },
             padding: {
               left: 50
+            },
+            color: {
+              pattern: [randomColor()]
             }
           });
         }
@@ -153,6 +152,19 @@
       // hide:
       $('#tags').find('.tag-' + tag).hide();
       $li.addClass('is-hidden');
+    }
+  }
+
+  function randomColor(rgb) {
+    if (rgb) {
+      return [
+        Math.floor(Math.random() * 256),
+        Math.floor(Math.random() * 256),
+        Math.floor(Math.random() * 256)
+      ];
+    }
+    else {
+      return '#'+(Math.random()*0xFFFFFF<<0).toString(16);
     }
   }
 </script>
