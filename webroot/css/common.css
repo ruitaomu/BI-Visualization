@@ -54,24 +54,24 @@ ul.dropdown-menu li.divider:first-child {
 
 .legend {
   margin-top: 5px;
-  padding
+  margin-left: 0;
 }
 
 .legend li {
   position: relative;
   cursor: pointer;
+  border-width: 1px;
+  border-style: solid;
+  min-width: 35px;
+  border-radius: 4px;
+  text-align: center;
+  padding: 0 5px;
+  margin: 0 5px 0 0;
 }
 
 .legend li.is-hidden {
   text-decoration: line-through;
-}
-
-.legend div {
-  display: inline-block;
-  width: 18px;
-  height: 18px;
-  margin-right: 3px;
-  vertical-align: middle;
+  opacity: .5;
 }
 
 .visualisation > div.row {

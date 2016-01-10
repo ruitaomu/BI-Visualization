@@ -3,6 +3,11 @@
 <link type="text/css" href="{$BASE}/lib/select2/select2.css" rel="stylesheet">
 <link type="text/css" href="{$BASE}/lib/select2-bootstrap/select2-bootstrap.css" rel="stylesheet">
 <link type="text/css" href="{$BASE}/lib/c3/c3.css" rel="stylesheet">
+<style type="text/css">
+  .c3-axis-y {
+    min-width: 50px;
+  }
+</style>
 {/block}
 {block name='content'}
 <section class="wrapper">
@@ -29,18 +34,29 @@
           </div>
         </div>
         {/if}
-        {if $tester_data.tags_file eq 1}
         <div class="row">
           <div class="col-lg-12 col-md-12 col-sm-12">
-            <div id="tags" class="tags"></div>
-            <ul id="legend" class="list-unstyled list-inline legend">
-            </ul>
+            <h2>Tags</h2>
+            <hr>
+            {if $tester_data.tags_file eq 1}
+              <div style="margin: 0 12px 0 62px;" class="xx">
+                <div id="tags" class="tags"></div>
+                <ul id="legend" class="list-unstyled list-inline legend"></ul>
+              </div>
+            {else}
+              There's no tags file uploaded for this tester, please upload one from the Data tab.
+            {/if}
           </div>
         </div>
-        {/if}
         <div class="row">
           <div class="col-lg-12 col-md-12 col-sm-12">
-            <div id="charts"></div>
+            <h2>Index Data</h2>
+            <hr>
+            {if $tester_data.index_file eq 1}
+              <div id="charts"></div>
+            {else}
+              There's no index file uploaded for this tester, please upload one from the Data tab.
+            {/if}
           </div>
         </div>
       {/if}
@@ -88,9 +104,9 @@
       }
 
       // legend:
-      var $li = $('<li>' + tag + '</li>').attr('data-tag', tag);
-      $('<div></div>').css('background-color', 'rgb(' + tags_color[tag] + ')').prependTo($li);
-      $li.appendTo($legend);
+      $('<li>' + tag + '</li>').attr('data-tag', tag).css({
+        'border-color': 'rgb(' + tags_color[tag] + ')'
+      }).appendTo($legend);
     }
 
     $legend.on('click', function(e) {
@@ -108,6 +124,12 @@
             bindto: $el[0],
             data: {
               columns: [index_data[attr]]
+            },
+            point: {
+              show: false
+            },
+            padding: {
+              left: 50
             }
           });
         }
