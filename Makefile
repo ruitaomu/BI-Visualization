@@ -4,7 +4,7 @@ CWD = .
 
 ##
 # List of directories that need to be writeable
-CHMOD_757_DIRS = $(CWD)/tmp/smarty/*/* $(CWD)/logs $(CWD)/data/index_files
+CHMOD_757_DIRS = $(CWD)/tmp/smarty/*/* $(CWD)/logs $(CWD)/data/*
 
 ##
 # Targets

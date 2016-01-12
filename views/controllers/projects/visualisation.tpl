@@ -112,33 +112,33 @@
 
     // generate the index data charts:
     setTimeout(function() {
-    if (index_data) {
-      var $charts = $('#charts'), charts = {};
-      for (var i = 0; i < index_attr.length; i++) {
-        var attr = index_attr[i].toLowerCase();
-        if (index_data[attr]) {
-          var $el = $('<div></div>').appendTo($charts);
-          c3.generate({
-            bindto: $el[0],
-            data: {
-              columns: [index_data[attr]]
-            },
-            point: {
-              show: false
-            },
-            padding: {
-              left: 50
-            },
-            color: {
-              pattern: [randomColor()]
-            },
-            onrendered: function() {
-              $('#loader').hide();
-            }
-          });
+      if (index_data) {
+        var $charts = $('#charts'), charts = {};
+        for (var i = 0; i < index_attr.length; i++) {
+          var attr = index_attr[i].toLowerCase();
+          if (index_data[attr]) {
+            var $el = $('<div></div>').appendTo($charts);
+            c3.generate({
+              bindto: $el[0],
+              data: {
+                columns: [index_data[attr]]
+              },
+              point: {
+                show: false
+              },
+              padding: {
+                left: 50
+              },
+              color: {
+                pattern: [randomColor()]
+              },
+              onrendered: function() {
+                $('#loader').hide();
+              }
+            });
+          }
         }
       }
-    }
     }, 500);
 
     $('#tester_id').change(function() {

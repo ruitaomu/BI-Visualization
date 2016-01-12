@@ -223,7 +223,7 @@ class project_model extends app_model {
 
       $hash = array(
         'tester_id' => $tester_id,
-        'index_file' => '1'
+        'index_file' => $_FILES['file']['name']
       );
       $where_str = "project_id = '$id' AND tester_id = :tester_id";
       $this->db()->update_record($hash, $tb, $where_str);
@@ -285,6 +285,11 @@ class project_model extends app_model {
     }
     fclose($f);
 
+    $ext = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
+    $dst = $this->frwk->cfg['ROOT_DIR'] . "/data/tags_files/$_id.$ext";
+
+    move_uploaded_file($_FILES['file']['tmp_name'], $dst);
+
     $tb_tag = tb('tag');
     foreach ($tags as $tag) {
       $tag['project_tester_id'] = $_id;
@@ -296,7 +301,7 @@ class project_model extends app_model {
 
     $hash = array(
       'tester_id' => $tester_id,
-      'tags_file' => '1'
+      'tags_file' => $_FILES['file']['name']
     );
     $where_str = "project_id = '$id' AND tester_id = :tester_id";
     $this->db()->update_record($hash, $tb, $where_str);
@@ -387,6 +392,44 @@ class project_model extends app_model {
 
         return $results;
       }
+    }
+  }
+
+  /**
+   * Download tags or index files for a tester.
+   */
+  public function download($tester_id, $what, $id = null) {
+    if (!($id = $this->require_id($id))) {
+      return false;
+    }
+
+    $tb = tb('project_tester');
+    $where_str = "project_id = '$id' AND tester_id = :tester_id";
+    $info = $this->db()->get_fields('*', $tb, $where_str, array(
+      'tester_id' => $tester_id
+    ));
+
+    switch ($what) {
+    case 'index':
+      $ext = pathinfo($info['index_file'], PATHINFO_EXTENSION);
+      $path = $this->frwk->cfg['ROOT_DIR'] . "/data/index_files/$info[id].$ext";
+      $name = $info['index_file'];
+      break;
+
+    case 'tags':
+      $ext = pathinfo($info['tags_file'], PATHINFO_EXTENSION);
+      $path = $this->frwk->cfg['ROOT_DIR'] . "/data/tags_files/$info[id].$ext";
+      $name = $info['tags_file'];
+      break;
+    }
+
+    if (file_exists($path)) {
+      header('Content-Type: application/octet-stream');
+      header('Content-Disposition: attachment; filename="' . $name . '"');
+      header('Expires: 0');
+      header('Cache-Control: must-revalidate');
+      header('Content-Length: ' . filesize($path));
+      readfile($path);
     }
   }
 

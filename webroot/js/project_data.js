@@ -74,6 +74,19 @@
       });
     });
 
+    $('#data_container').on('click', 'a[data-download]', function(e) {
+      var $el = $(e.target).closest('a'),
+          $form = $el.closest('form'),
+          what = $el.attr('data-download');
+
+      var url = [
+        $form.attr('data-download'), '&tester_id=', $form.attr('data-tester_id'),
+        '&what=', what
+      ].join('');
+
+      window.location.href = url;
+    });
+
     $('[data-toggle="tooltip"]').tooltip({
       'container': 'body'
     });

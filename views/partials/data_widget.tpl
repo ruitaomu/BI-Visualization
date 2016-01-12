@@ -1,6 +1,6 @@
 <div class="data-widget {if $t}added{/if} {if $t.wistia_video_hashed_id}has-video{/if} {if $t.index_file}has-index{/if} {if $t.tags_file}has-tags{/if} col-lg-3 col-md-4 col-sm-6">
   <div class="add"><span>+</span><br>click to add project data</div>
-  <form data-action-add-tester="{href action='add-tester'}?id={$id}" data-action-del-tester="{href action='del-tester'}?id={$id}" data-action-set-video-hashed-id="{href action='set-video-hashed-id'}?id={$id}" {if $t}data-tester_id="{$t.tester_id}"{/if}>
+  <form data-action-add-tester="{href action='add-tester'}?id={$id}" data-action-del-tester="{href action='del-tester'}?id={$id}" data-action-set-video-hashed-id="{href action='set-video-hashed-id'}?id={$id}" {if $t}data-tester_id="{$t.tester_id}"{/if} data-download="{href action='download'}?id={$id}">
     <div class="panel">
       <div class="panel-heading">
         <span class="tester-name">{if $t}{$t.name}{else}&nbsp;{/if}</span>
@@ -47,8 +47,10 @@
             <a href="javascript:;" class="info" data-toggle="tooltip" data-placement="top" data-html="true" title="The file should be in CSV format with the following columns:<br>{$index_cols}"><i class="fa fa-info-circle"></i></a>
           </div>
           <div class="uploaded placeholder">
-            <i class="fa fa-check fa-2x"></i>
-            <span>index file uploaded</span>
+            <a href="javascript:;" data-download="index">
+              <i class="fa fa-file-text-o fa-2x"></i>
+              <span>download index file</span>
+            </a>
           </div>
           <div class="upload-progress"></div>
         </div>
@@ -62,8 +64,10 @@
             </div>
           </div>
           <div class="uploaded placeholder">
-            <i class="fa fa-check fa-2x"></i>
-            <span>tags file uploaded</span>
+            <a href="javascript:;" data-download="tags">
+              <i class="fa fa-file-text-o fa-2x"></i>
+              <span>download tags file</span>
+            </a>
           </div>
           <div class="upload-progress"></div>
         </div>

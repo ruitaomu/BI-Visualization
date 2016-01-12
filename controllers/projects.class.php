@@ -260,6 +260,21 @@ class projects_controller extends front_controller {
 		}
   }
 
+  public function action_download() {
+		$id = $this->params->get('id', 0);
+		$this->model->load($id);
+
+		if ($id > 0) {
+			if (!$this->model->exists() || !$this->model->access_allowed()) {
+				return response::access_denied();
+			}
+
+      $this->model->download($this->params->tester_id, $this->params->what);
+		}
+
+    return false;
+  }
+
 	//////////////////////////////////////////////////////////////////////////////
 	//
 	// Private Methods
