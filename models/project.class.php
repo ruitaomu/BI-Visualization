@@ -125,7 +125,8 @@ class project_model extends app_model {
 
     // delete index file:
     if ($what == 'index' || $what == 'all') {
-      $path = $this->frwk->cfg['ROOT_DIR'] . "/data/index_files/$info[id].csv";
+      $ext = pathinfo($info['index_file'], PATHINFO_EXTENSION);
+      $path = $this->frwk->cfg['ROOT_DIR'] . "/data/index_files/$info[id].$ext";
       if (file_exists($path)) {
         unlink($path);
       }
@@ -140,6 +141,12 @@ class project_model extends app_model {
     if ($what == 'tags' || $what == 'all') {
       $tb_tag = tb('tag');
       $this->query("DELETE FROM $tb_tag WHERE project_tester_id = '$info[id]'");
+
+      $ext = pathinfo($info['tags_file'], PATHINFO_EXTENSION);
+      $path = $this->frwk->cfg['ROOT_DIR'] . "/data/tags_files/$info[id].$ext";
+      if (file_exists($path)) {
+        unlink($path);
+      }
 
       if ($what != 'all') {
         $hash = array('tags_file' => '');
@@ -363,7 +370,7 @@ class project_model extends app_model {
       'tester_id' => $tester_id
     ));
 
-    if ($info['index_file'] !== '1') {
+    if (empty($info['index_file'])) {
       return null;
     }
 
