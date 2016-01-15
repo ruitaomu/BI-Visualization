@@ -40,7 +40,9 @@
             <hr>
             {if $tester_data.tags_file}
               <div style="margin: 0 12px 0 62px;" class="xx">
-                <div id="tags" class="tags"></div>
+                <div id="tags" class="tags">
+                  <div id="tags-marker" class="video-marker" data-toggle="tooltip" data-html="true" data-title="<span class='video-time'>00:00</span>" data-trigger="manual" data-placement="top" data-container="#tags-marker"></div>
+                </div>
                 <ul id="legend" class="list-unstyled list-inline legend"></ul>
               </div>
             {else}
@@ -66,6 +68,7 @@
 </section>
 {/block}
 {block name='foot' append}
+<script src="//fast.wistia.net/assets/external/E-v1.js"></script>
 <script type="text/javascript" src="{$BASE}/lib/select2/select2.js"></script>
 <script type="text/javascript" src="{$BASE}/lib/frwk/js/forms.js"></script>
 <script type="text/javascript" src="{$BASE}/lib/d3/d3.min.js"></script>
@@ -123,6 +126,9 @@
               data: {
                 columns: [index_data[attr]]
               },
+              zoom: {
+                enabled: true
+              },
               point: {
                 show: false
               },
@@ -145,6 +151,22 @@
       var url = "{href action='visualisation'}?id={$id}" + '&tester_id=' + $(this).val();
       window.location.href = url;
     });
+
+    window._wq = window._wq || [];
+    _wq.push({
+      '_all': function(video) {
+        video.bind('timechange', function(t) {
+          var p = t / video.duration() * 100;
+          updateVideoProgress(p, t);
+        });
+        
+        video.bind('end', function() {
+          updateVideoProgress(100, video.duration());
+        });
+      }
+    });
+
+    $('[data-toggle="tooltip"]').tooltip('show');
   });
 
   function toggleTag($li) {
@@ -172,6 +194,32 @@
     else {
       return '#'+(Math.random()*0xFFFFFF<<0).toString(16);
     }
+  }
+
+  function updateVideoProgress(p, t) {
+    $('.video-marker').css({
+      'left': p + '%'
+    });
+
+    var h, m, s, ms, time = [];
+
+    ms = t + '';
+    if (ms.indexOf('.') > 0) {
+      ms = ms.substr(ms.indexOf('.'));
+    }
+    
+    if (h = Math.floor(t / 3600)) {
+      time.push(h);
+    }
+    
+    m = Math.floor((t % 3600) / 60);
+    time.push(m < 10 ? '0' + m : m);
+
+    s = t % 60;
+    s = ((s < 10 ? '0' + s : s) + '').substr(0, 6);
+    time.push(s);
+
+    $('.video-time').text(time.join(':'));
   }
 </script>
 {/block}

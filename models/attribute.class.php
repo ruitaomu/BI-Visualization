@@ -195,6 +195,16 @@ class attribute_model extends app_model {
             'list' => self::values('experience')
           )
         )
+      ),
+      'ma' => array(
+        'label' => 'Moving Average',
+        'list' => array(
+          'ma' => array(
+            'label' => 'Moving Average Dropdown',
+            'placeholder' => 'MA period (seconds)',
+            'list' => self::values('ma')
+          )
+        )
       )
     );
 
