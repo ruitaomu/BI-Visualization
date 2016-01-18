@@ -44,12 +44,62 @@ ul.dropdown-menu li.divider:first-child {
 .tags {
   position: relative;
   height: 40px;
+  margin-bottom: 30px;
 }
 
 .tags > div {
   position: absolute;
   top: 0;
   height: 100%;
+}
+
+.tags > div > div.t_s, .tags > div > div.t_e {
+  position: absolute;
+  display: none;
+  width: 100px;
+  text-align: center;
+}
+
+.tags > div > div.t_s {
+  bottom: 100%;
+  left: 0;
+  margin-left: -50px;
+  margin-bottom: 5px;
+}
+
+.tags > div > div.t_s:before {
+  position: absolute;
+  content: ' ';
+  background-color: #000;
+  height: 45px;
+  width: 1px;
+  left: 50%;
+  bottom: -45px;
+}
+
+.tags > div > div.t_e {
+  top: 100%;
+  right: 0;
+  margin-right: -50px;
+  margin-top: 5px;
+}
+
+.tags > div > div.t_e:before {
+  position: absolute;
+  content: ' ';
+  background-color: #000;
+  height: 45px;
+  width: 1px;
+  left: 50%;
+  top: -45px;
+}
+
+.tags > div.active {
+  z-index: 99;
+}
+
+.tags > div.active > div.t_s, .tags > div.active > div.t_e {
+  display: block;
 }
 
 .legend {

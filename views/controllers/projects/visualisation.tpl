@@ -39,7 +39,7 @@
             <span style="font-size: 15px;">Tags</span> (incomplete for next milestone review)
             <hr>
             {if $tester_data.tags_file}
-              <div style="margin: 0 12px 0 62px;" class="xx">
+              <div style="margin: 0 12px 0 62px; padding-top: 10px;">
                 <div id="tags" class="tags">
                   <div id="tags-marker" class="video-marker" data-toggle="tooltip" data-html="true" data-title="<span class='video-time'>00:00</span>" data-trigger="manual" data-placement="top" data-container="#tags-marker"></div>
                 </div>
@@ -87,20 +87,40 @@
     var $tags = $('#tags');
     var $legend = $('#legend');
     var t_s, t_e;
-    var max_ts = tags.max_ts * 1 - tags.min_ts * 1;
+    //var max_ts = tags.max_ts * 1 - tags.min_ts * 1;
+    var max_ts = tags.max_ts * 1;
     var tags_color = {};
     for (var tag in tags.tag) {
       tags_color[tag] = randomColor(true);
 
       for (var i = 0; i < tags.tag[tag].length; i++) {
-        t_s = tags.tag[tag][i].t_s * 1 - tags.min_ts * 1;
-        t_e = tags.tag[tag][i].t_e * 1 - tags.min_ts * 1;
+        //t_s = tags.tag[tag][i].t_s * 1 - tags.min_ts * 1;
+        //t_e = tags.tag[tag][i].t_e * 1 - tags.min_ts * 1;
+        t_s = tags.tag[tag][i].t_s * 1;
+        t_e = tags.tag[tag][i].t_e * 1;
         
-        $('<div></div>').addClass('tag-' + tag).css({
+        var $tag = $('<div></div>').attr('data-tag', tag).addClass('tag-' + tag).css({
           'left': (t_s / max_ts * 100) + '%',
           'width': ((t_e - t_s) / max_ts * 100) + '%',
           'background-color': 'rgba(' + tags_color[tag] + ',1)'
-        }).appendTo($tags);
+        }).hover(
+          function(e) {
+            var $el = $(e.target);
+            var $tags = $el.closest('.tags');
+
+            $tags.children('.active').removeClass('active');
+            $tags.children('.tag-' + $el.attr('data-tag')).addClass('active');
+          },
+          function(e) {
+            var $el = $(e.target);
+            var $tags = $el.closest('.tags');
+
+            $tags.children('.active').removeClass('active');
+          }
+        ).appendTo($tags);
+
+        $('<div class="t_s"></div>').text(sec2time(t_s / 1000)).appendTo($tag);
+        $('<div class="t_e"></div>').text(sec2time(t_e / 1000)).appendTo($tag);
       }
 
       // legend:
@@ -201,25 +221,29 @@
       'left': p + '%'
     });
 
+    $('.video-time').text(sec2time(t));
+  }
+
+  function sec2time(sec) {
     var h, m, s, ms, time = [];
 
-    ms = t + '';
+    ms = sec + '';
     if (ms.indexOf('.') > 0) {
       ms = ms.substr(ms.indexOf('.'));
     }
     
-    if (h = Math.floor(t / 3600)) {
+    if (h = Math.floor(sec / 3600)) {
       time.push(h);
     }
     
-    m = Math.floor((t % 3600) / 60);
+    m = Math.floor((sec % 3600) / 60);
     time.push(m < 10 ? '0' + m : m);
 
-    s = t % 60;
+    s = sec % 60;
     s = ((s < 10 ? '0' + s : s) + '').substr(0, 6);
     time.push(s);
 
-    $('.video-time').text(time.join(':'));
+    return time.join(':');
   }
 </script>
 {/block}
