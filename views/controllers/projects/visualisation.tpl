@@ -36,7 +36,7 @@
         {/if}
         <div class="row">
           <div class="col-lg-12 col-md-12 col-sm-12">
-            <span style="font-size: 15px;">Tags</span> (incomplete for next milestone review)
+            <span style="font-size: 15px;">Tags</span>
             <hr>
             {if $tester_data.tags_file}
               <div style="margin: 0 12px 0 62px; padding-top: 10px;">
