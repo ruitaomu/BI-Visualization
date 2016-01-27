@@ -136,3 +136,17 @@ ul.dropdown-menu li.divider:first-child {
   background-color: #ff0000;
   z-index: 100;
 }
+
+.dash-item {
+  text-align: center;
+}
+
+.dash-item i {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.dash-item a {
+  color: inherit;
+  text-decoration: none;
+}
