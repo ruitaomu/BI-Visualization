@@ -386,9 +386,9 @@ class project_model extends app_model {
         foreach ($data as $row) {
           if (is_null($header)) {
             $header = $row;
-            for ($i = 0; $i < count($header); $i++) {
+            /*for ($i = 0; $i < count($header); $i++) {
               $results[strtolower($header[$i])] = array($header[$i]);
-            }
+            }*/
           }
           else {
             for ($i = 0; $i < count($row); $i++) {

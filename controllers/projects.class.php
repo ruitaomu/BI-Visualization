@@ -164,6 +164,13 @@ class projects_controller extends front_controller {
         $index_attr = array_values(attribute_model::values('index_data'));
         $this->set('index_attr_json', json_encode($index_attr));
 
+        $ma = array_values(attribute_model::values('ma'));
+        $ma_attr = array(array('id' => 0, 'text' => 'Moving Average'));
+        foreach ($ma as $x) {
+          $ma_attr[] = array('id' => $x, 'text' => $x);
+        }
+        $this->set('ma_attr_json', json_encode($ma_attr));
+
         $tester_data = $this->model->get_testers($tester_id);
         $this->set('tester_data', $tester_data[0]);
       }
