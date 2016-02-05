@@ -386,15 +386,23 @@ class project_model extends app_model {
         foreach ($data as $row) {
           if (is_null($header)) {
             $header = $row;
-            /*for ($i = 0; $i < count($header); $i++) {
-              $results[strtolower($header[$i])] = array($header[$i]);
-            }*/
+            for ($i = 0; $i < count($header); $i++) {
+              $header[$i] = strtolower($header[$i]);
+              $results[$header[$i]] = array();
+              $results["$header[$i]_sum"] = $results["$header[$i]_count"] = 0;
+            }
           }
           else {
             for ($i = 0; $i < count($row); $i++) {
               $results[$header[$i]][] = $row[$i];
+              $results["$header[$i]_sum"] += $row[$i];
+              $results["$header[$i]_count"] += 1;
             }
           }
+        }
+
+        for ($i = 0; $i < count($header); $i++) {
+          $results["$header[$i]_avg"] = $results["$header[$i]_sum"] / $results["$header[$i]_count"];
         }
 
         return $results;

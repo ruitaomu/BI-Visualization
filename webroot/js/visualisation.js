@@ -252,6 +252,12 @@
       data: getFlotData(attr)
     });
 
+    var avg = index_data[attr + '_avg'];
+    series.push({
+      color: 2,
+      data: [[0, avg], [index_data[attr].length, avg]]
+    });
+
     // moving average:
     if (charts[attr].ma) {
       series.push({
