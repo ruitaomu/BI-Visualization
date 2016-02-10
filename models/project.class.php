@@ -388,21 +388,26 @@ class project_model extends app_model {
             $header = $row;
             for ($i = 0; $i < count($header); $i++) {
               $header[$i] = strtolower($header[$i]);
-              $results[$header[$i]] = array();
-              $results["$header[$i]_sum"] = $results["$header[$i]_count"] = 0;
+              $results[$header[$i]] = array(
+                'series' => array(),
+                'sum' => 0,
+                'count' => 0
+              );
             }
           }
           else {
             for ($i = 0; $i < count($row); $i++) {
-              $results[$header[$i]][] = $row[$i];
-              $results["$header[$i]_sum"] += $row[$i];
-              $results["$header[$i]_count"] += 1;
+              $results[$header[$i]]['series'][] = $row[$i];
+              $results[$header[$i]]['sum'] += $row[$i];
+              $results[$header[$i]]['count'] += 1;
             }
           }
         }
 
         for ($i = 0; $i < count($header); $i++) {
-          $results["$header[$i]_avg"] = $results["$header[$i]_sum"] / $results["$header[$i]_count"];
+          $results[$header[$i]]['avg'] = $results[$header[$i]]['sum'] / $results[$header[$i]]['count'];
+          unset($results[$header[$i]]['sum']);
+          unset($results[$header[$i]]['count']);
         }
 
         return $results;
@@ -476,4 +481,17 @@ class project_model extends app_model {
 	//
 	//////////////////////////////////////////////////////////////////////////////
 
+	public static function get_opt($params = array()) {
+    $model = new self();
+
+    $where_str = array();
+    foreach ($params as $name => $value) {
+      if (!empty($value)) {
+        $where_str[] = "$name = :$name";
+      }
+    }
+    $where_str = implode(' AND ', $where_str);
+
+    return $model->opt('id', 'title', $where_str, $params);
+  }
 }

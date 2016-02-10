@@ -159,7 +159,7 @@ class attribute_model extends app_model {
   /**
    * Get all attributes, ready for display.
    */
-  public static function get_tree() {
+  public static function get_tree($section = null) {
     $tree = array(
       'project' => array(
         'label' => 'Project Attributes',
@@ -208,6 +208,11 @@ class attribute_model extends app_model {
       )
     );
 
-    return $tree;
+    if (!is_null($section)) {
+      return $tree[$section];
+    }
+    else {
+      return $tree;
+    }
   }
 }

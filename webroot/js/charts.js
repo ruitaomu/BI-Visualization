@@ -5,36 +5,6 @@
       selectedTags = {},
       cache = {data: {}, ma: {}};
 
-  $(function() {
-    // initialise select2 controls:
-    $('#tester_id').select2({
-      minimumResultsForSearch: 10
-    });
-
-    $('#tester_id').change(function() {
-      window.location.href = url + '&tester_id=' + $(this).val();
-    });
-
-    displayTags();
-    displayCharts();
-
-    $('[data-toggle="tooltip"]').tooltip('show');
-
-    window._wq = window._wq || [];
-    _wq.push({
-      '_all': function(video) {
-        video.bind('timechange', function(t) {
-          var p = t / video.duration() * 100;
-          updateVideoProgress(p, t);
-        });
-        
-        video.bind('end', function() {
-          updateVideoProgress(100, video.duration());
-        });
-      }
-    });
-  });
-
   function displayTags() {
     var $tags = $('#tags');
     var $legend = $('#legend');
@@ -101,6 +71,8 @@
     });
   }
 
+  window.displayTags = displayTags;
+
   function toggleTag($li) {
     var tag = $li.attr('data-tag');
     if ($li.hasClass('is-hidden')) {
@@ -149,6 +121,8 @@
       }
     }
   }
+
+  window.displayCharts = displayCharts;
 
   function displayChart(attr) {
     var series = [];
@@ -252,10 +226,10 @@
       data: getFlotData(attr)
     });
 
-    var avg = index_data[attr + '_avg'];
+    var avg = index_data[attr].avg;
     series.push({
       color: 2,
-      data: [[0, avg], [index_data[attr].length, avg]]
+      data: [[0, avg], [index_data[attr].series.length, avg]]
     });
 
     // moving average:
@@ -317,8 +291,8 @@
   function getFlotData(attr) {
     var data = [];
 
-    for (var i = 0; i < index_data[attr].length; i++) {
-      data.push([i, index_data[attr][i]]);
+    for (var i = 0; i < index_data[attr].series.length; i++) {
+      data.push([i, index_data[attr].series[i]]);
     }
 
     var intervals = getIntervals(attr);
@@ -346,11 +320,11 @@
     }
 
     var s = 0;
-    for (var i = 0; i < index_data[attr].length; i++) {
-      s += index_data[attr][i];
+    for (var i = 0; i < index_data[attr].series.length; i++) {
+      s += index_data[attr].series[i];
       if (i >= period - 1) {
         data.push([i, s / period]);
-        s -= index_data[attr][i - period + 1];
+        s -= index_data[attr].series[i - period + 1];
       }
       else {
         data.push([i, null]);
@@ -391,6 +365,8 @@
 
     $('.video-time').text(sec2time(t));
   }
+
+  window.updateVideoProgress = updateVideoProgress;
 
   function sec2time(sec) {
     var h, m, s, ms, time = [];

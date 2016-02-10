@@ -8,6 +8,7 @@
   <section class="panel">
     <div class="panel-heading">
 	    <span class="lead">Projects | {$count} Project{if $count != 1}s{/if}</span>
+      {include file='controllers/projects/tabs1.tpl'}
     </div>
     <div class="panel-body">
     	<form action="{href action='delete'}" method="post">
@@ -38,11 +39,20 @@
 <script type="text/javascript" src="{$BASE}/lib/datejs/date.js"></script>
 <script type="text/javascript">
 	var update_url = "{href action='update'}";
+  var filters = {$filters_json};
 	var dtcfg = {
 		't1': {
 			'bProcessing': true,
 			'bServerSide': true,
 			'sAjaxSource': "{href action='datatables'}",
+      'fnServerParams': function(aaData) {
+        for (var k in filters) {
+          aaData.push({
+            'name': 'filters[' + k + ']',
+            'value': filters[k]
+          });
+        }
+      },
 			'aoColumns': [
 				{
 					'mData': 'id',

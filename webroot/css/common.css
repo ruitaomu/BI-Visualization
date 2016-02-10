@@ -186,3 +186,15 @@ ul.dropdown-menu li.divider:first-child {
   display: block;
   text-align: center;
 }
+
+.filters {
+  background-color: #fafafa;
+}
+
+.filters .panel-heading {
+  text-align: center;
+}
+
+.filters select {
+  margin-bottom: 5px;
+}

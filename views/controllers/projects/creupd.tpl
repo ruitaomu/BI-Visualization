@@ -9,7 +9,7 @@
   <section class="panel">
     <div class="panel-heading">
 	    <span class="lead">{if $id gt 0}{'Projects'|i18n} | {$title}{else}{'Create Project'|i18n}{/if}</span>
-      {include file='controllers/projects/tabs.tpl'}
+      {include file='controllers/projects/tabs2.tpl'}
     </div>
     <div class="panel-body">
     	<form id="creupd" method="post" class="form-horizontal" autocomplete="off" data-frwk-validation="project_model::default" {if $id gt 0}data-frwk-mode="upd"{/if}>

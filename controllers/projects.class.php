@@ -41,7 +41,11 @@ class projects_controller extends front_controller {
 	 */
 
 	public function action_index() {
-    $this->set('count', project_model::get_count());
+    $filters = $this->params->all();
+    $this->set('filters_json', json_encode($filters));
+
+    $this->set('count', project_model::get_count($filters));
+    $this->set('tab', 'list');
 	}
 
 	public function action_create() {
@@ -84,10 +88,19 @@ class projects_controller extends front_controller {
     $tb1 = $this->model->attr('tb');
     $tb2 = tb('customer');
 
+    $where_str = array('t2.id = t1.customer_id');
+    $filters = $this->params->filters;
+    if (is_array($filters)) {
+      foreach ($filters as $k => $v) {
+        $where_str[] = "t1.$k = '$v'";
+      }
+    }
+    $where_str = implode(' AND ', $where_str);
+
 		return $this->model->datatables(array(
       'select' => 't1.*, t2.name AS customer',
       'from' => "$tb1 AS t1, $tb2 AS t2",
-      'where_str' => 't2.id = t1.customer_id',
+      'where_str' => $where_str,
 
 			// table columns:
 			'cols' => array('id', 'title', 'customer', 'num_testers', 'created_on'),
@@ -96,7 +109,7 @@ class projects_controller extends front_controller {
 		));
 	}
 
-  public function action_data() {
+  public function action_project_data() {
 		$id = $this->params->get('id', 0);
 		$this->model->load($id);
 		$item = array();
@@ -128,7 +141,7 @@ class projects_controller extends front_controller {
 		}
   }
 
-  public function action_visualisation() {
+  public function action_project_data_visualisation() {
 		$id = $this->params->get('id', 0);
 		$this->model->load($id);
 		$item = array();
@@ -282,6 +295,73 @@ class projects_controller extends front_controller {
     return false;
   }
 
+  public function action_data() {
+    $this->set('tab', 'data');
+
+    $this->set('customer_opt', customer_model::get_opt());
+
+    $this->set('project_filters', attribute_model::get_tree('project'));
+
+    $index_attr = array_values(attribute_model::values('index_data'));
+    $this->set('index_attr_json', json_encode($index_attr));
+
+    $ma = array_values(attribute_model::values('ma'));
+    $ma_attr = array(array('id' => 0, 'text' => 'Moving Average'));
+    foreach ($ma as $x) {
+      $ma_attr[] = array('id' => $x, 'text' => $x);
+    }
+    $this->set('ma_attr_json', json_encode($ma_attr));
+
+    $this->set('filters', $this->params->all());
+  }
+
+  /**
+   * Combine the index data from multiple projects/testers.
+   */
+  public function action_index_data() {
+		$filters = $this->params->all();
+
+    $result = array();
+    $projects = project_model::get_opt($filters);
+    foreach ($projects as $id => $title) {
+      $testers = $this->model->get_testers(null, $id);
+      foreach ($testers as $tester) {
+        $data = $this->model->get_index_data($tester['tester_id'], $id);
+        foreach ($data as $name => $values) {
+          if (!isset($result[$name])) {
+            $result[$name] = array(
+              'series' => array(),
+              'sets' => 0
+            );
+          }
+
+          $result[$name]['sets']++;
+
+          for ($i = 0; $i < count($values['series']); $i++) {
+            if (isset($result[$name]['series'][$i])) {
+              $result[$name]['series'][$i] += $values['series'][$i];
+            }
+            else {
+              $result[$name]['series'][$i] = $values['series'][$i];
+            }
+          }
+        }
+      }
+    }
+
+    foreach ($result as $name => $data) {
+      $sum = 0;
+      for ($i = 0; $i < count($result[$name]['series']); $i++) {
+        $result[$name]['series'][$i] /= $result[$name]['sets'];
+        $sum += $result[$name]['series'][$i];
+      }
+      $result[$name]['avg'] = $sum / count($result[$name]['series']);
+      unset($result[$name]['sets']);
+    }
+
+    return response::ajax_success($result);
+  }
+
 	//////////////////////////////////////////////////////////////////////////////
 	//
 	// Private Methods
@@ -314,7 +394,7 @@ class projects_controller extends front_controller {
           }
           else {
 					  $this->session()->flash(_("Project created successfully."));
-            $next_action = 'data';
+            $next_action = 'project-data';
           }
 					
 					if ($this->req->is('ajax')) {

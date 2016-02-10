@@ -2,7 +2,6 @@
 {block name='head' append}
 <link type="text/css" href="{$BASE}/lib/select2/select2.css" rel="stylesheet">
 <link type="text/css" href="{$BASE}/lib/select2-bootstrap/select2-bootstrap.css" rel="stylesheet">
-<link type="text/css" href="{$BASE}/lib/c3/c3.css" rel="stylesheet">
 <style type="text/css">
   .c3-axis-y {
     min-width: 50px;
@@ -19,7 +18,7 @@
         <option value=""></option>
         {html_options options=$tester_opt selected=$tester_id}
       </select>
-      {include file='controllers/projects/tabs.tpl'}
+      {include file='controllers/projects/tabs2.tpl'}
     </div>
     <div class="panel-body visualisation">
       {if $tester_id}
@@ -74,12 +73,42 @@
 <script type="text/javascript" src="{$BASE}/lib/flot/jquery.flot.resize.js"></script>
 <script type="text/javascript" src="{$BASE}/lib/flot/jquery.flot.crosshair.js"></script>
 <script type="text/javascript" src="{$BASE}/lib/flot/jquery.flot.selection.js"></script>
-<script type="text/javascript" src="{$BASE}/js/visualisation.js"></script>
+<script type="text/javascript" src="{$BASE}/js/charts.js"></script>
 <script type="text/javascript">
   var tags = {$tags_json};
   var index_data = {$index_data_json};
   var index_attr = {$index_attr_json};
   var ma_attr = {$ma_attr_json};
-  var url = "{href action='visualisation'}?id={$id}";
+  var url = "{href action='project-data-visualisation'}?id={$id}";
+
+  $(function() {
+    // initialise select2 controls:
+    $('#tester_id').select2({
+      minimumResultsForSearch: 10
+    });
+
+    $('#tester_id').change(function() {
+      window.location.href = url + '&tester_id=' + $(this).val();
+    });
+
+    displayTags();
+    displayCharts();
+
+    $('[data-toggle="tooltip"]').tooltip('show');
+
+    window._wq = window._wq || [];
+    _wq.push({
+      '_all': function(video) {
+        video.bind('timechange', function(t) {
+          var p = t / video.duration() * 100;
+          updateVideoProgress(p, t);
+        });
+        
+        video.bind('end', function() {
+          updateVideoProgress(100, video.duration());
+        });
+      }
+    });
+  });
 </script>
 {/block}
