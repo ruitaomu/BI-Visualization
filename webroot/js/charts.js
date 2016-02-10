@@ -180,7 +180,7 @@
 
     for (var attr in charts) {
       var plot = charts[attr].plot;
-      var n = index_data[attr].length - 1;
+      var n = index_data[attr].series.length - 1;
       plot.lockCrosshair({ x: n * p/100 });
     }
   }
@@ -260,8 +260,8 @@
       for (var j = 0; j < tags.tag[selTags[i]].length; j++) {
         var seq = tags.tag[selTags[i]][j];
         intervals.push({
-          s: Math.max(0, Math.min(Math.round(seq.t_s / 400), index_data[attr].length - 1)),
-          e: Math.max(0, Math.min(Math.round(seq.t_e / 400), index_data[attr].length - 1))
+          s: Math.max(0, Math.min(Math.round(seq.t_s / 400), index_data[attr].series.length - 1)),
+          e: Math.max(0, Math.min(Math.round(seq.t_e / 400), index_data[attr].series.length - 1))
         });
       }
     }
@@ -281,8 +281,8 @@
       }
     }
 
-    if (start < index_data[attr].length - 1) {
-      result.push({s: start, e: index_data[attr].length - 1});
+    if (start < index_data[attr].series.length - 1) {
+      result.push({s: start, e: index_data[attr].series.length - 1});
     }
 
     return result;
