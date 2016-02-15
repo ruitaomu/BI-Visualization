@@ -173,6 +173,11 @@ class attribute_model extends app_model {
             'label' => 'Game Hardware Dropdown',
             'placeholder' => 'Game Hardware',
             'list' => self::values('game_hardware')
+          ),
+          'age_group' => array(
+            'label' => 'Age Group',
+            'placeholder' => 'Age Group',
+            'list' => self::values('age_group')
           )
         )
       ),

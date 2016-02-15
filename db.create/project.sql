@@ -8,6 +8,7 @@ CREATE TABLE project (
   game_type_id int unsigned not null default 0,
   game_version varchar(8) not null default '',
   game_hardware_id int unsigned not null default 0,
+  age_group_id int unsigned not null default 0,
 
   num_testers int unsigned not null default 0,
 

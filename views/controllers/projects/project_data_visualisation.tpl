@@ -2,11 +2,6 @@
 {block name='head' append}
 <link type="text/css" href="{$BASE}/lib/select2/select2.css" rel="stylesheet">
 <link type="text/css" href="{$BASE}/lib/select2-bootstrap/select2-bootstrap.css" rel="stylesheet">
-<style type="text/css">
-  .c3-axis-y {
-    min-width: 50px;
-  }
-</style>
 {/block}
 {block name='content'}
 <section class="wrapper">

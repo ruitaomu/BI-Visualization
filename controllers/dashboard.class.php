@@ -37,6 +37,20 @@ class dashboard_controller extends front_controller {
       'testers' => tester_model::get_count(),
       'tags' => $this->db()->get_fields('COUNT(DISTINCT tag)', tb('tag'))
     ));
+
+    $charts = array(
+      'game_hardware' => array(
+        'data' => project_model::get_count_by_attr('game_hardware')
+      ),
+      'game_type' => array(
+        'data' => project_model::get_count_by_attr('game_type')
+      ),
+      'age_group' => array(
+        'data' => project_model::get_count_by_attr('age_group')
+      )
+    );
+
+    $this->set('charts_json', json_encode($charts));
 	}
 
 	//////////////////////////////////////////////////////////////////////////////

@@ -26,6 +26,9 @@ class project_model extends app_model {
       ),
       'game_hardware_id' => array(
         'required'
+      ),
+      'age_group_id' => array(
+        'required'
       )
 		)
 	);
@@ -493,5 +496,30 @@ class project_model extends app_model {
     $where_str = implode(' AND ', $where_str);
 
     return $model->opt('id', 'title', $where_str, $params);
+  }
+
+  /**
+   * Get project counts by hardware. This function's return is optimised for
+   * consumption by a Flot chart.
+   */
+  public static function get_count_by_attr($attr) {
+    $model = new self();
+    $attr_values = attribute_model::values($attr);
+    $results = array();
+
+    $qstr = implode(' ', array(
+      "SELECT {$attr}_id AS attr_id, COUNT(*) AS count",
+      "FROM {$model->attr('tb')}",
+      "GROUP BY {$attr}_id"
+    ));
+    $q = $model->query($qstr);
+    while (is_array($res = $q->getrow())) {
+      $results[] = array(
+        'label' => $attr_values[$res['attr_id']],
+        'data' => $res['count']
+      );
+    }
+
+    return $results;
   }
 }

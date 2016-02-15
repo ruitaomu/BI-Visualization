@@ -72,6 +72,19 @@
               </div>
     				</div>
     			</div>
+    			<div class="control-group form-group">
+    				<label for="age_group_id" class="control-label col-lg-2 col-md-2 col-sm-2">{'Age Group'|i18n}</label>
+    				<div class="controls col-lg-10 col-md-10 col-sm-10">
+              <div class="input-group select2-bootstrap-append">
+    					  <select id="age_group_id" name="age_group_id" class="form-control">
+                  {html_options options=$age_group_id_opt selected=$age_group_id}
+                </select>
+                <span class="input-group-btn">
+                  <a data-toggle="modal" href="#addAgeGroup" class="btn btn-primary">Add New</a>
+                </span>
+              </div>
+    				</div>
+    			</div>
     			<div class="form-group">
             <div class="col-lg-offset-2 col-md-offset-2 col-sm-offset-2 col-lg-10 col-md-10 col-sm-10">
     				  <button type="submit" class="btn btn-primary">{if $id}Update{else}Next{/if}</button>
@@ -183,6 +196,36 @@
     </div>
   </form>
 </div>
+<div aria-hidden="true" role="dialog" tabindex="-1" id="addAgeGroup" class="modal fade">
+  <form id="add_age_group" method="post" action="{href controller='attributes' action='add-attribute'}" data-frwk-validation="attribute_model::default" data-frwk-submitfn="add_attribute">
+    <input type="hidden" name="name" value="age_group">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Add Age Group</h4>
+        </div>
+        <div class="modal-body">
+          <div class="form-group control-group">
+            <div class="controls">
+              <input type="text" name="value" placeholder="Age Group" class="form-control" maxlength="64">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="pull-left" style="margin-top: 7px;">
+            <span class="x-state x-state_loading" style="display: none;">
+              <img src="{$BASE}/img/ajax-loader.gif">
+              {'Please wait...'|i18n}
+            </span>
+          </div>
+          <button data-dismiss="modal" class="btn btn-default" type="button">Cancel</button>
+          <button class="btn btn-primary" type="submit">Add Age Group</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
 {/block}
 {block name='foot' append}
 <script type="text/javascript" src="{$BASE}/lib/select2/select2.js"></script>
@@ -220,6 +263,7 @@
         switch ($modal.attr('id')) {
           case 'addGameType': select = '#game_type_id'; break;
           case 'addGameHardware': select = '#game_hardware_id'; break;
+          case 'addAgeGroup': select = '#age_group_id'; break;
         }
 
         add_option($(select), response, value);

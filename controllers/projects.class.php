@@ -431,5 +431,6 @@ class projects_controller extends front_controller {
     $this->set('customer_id_opt', customer_model::get_opt());
     $this->set('game_type_id_opt', attribute_model::values('game_type'));
     $this->set('game_hardware_id_opt', attribute_model::values('game_hardware'));
+    $this->set('age_group_id_opt', attribute_model::values('age_group'));
 	}
 }
