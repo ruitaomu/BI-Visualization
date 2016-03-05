@@ -164,7 +164,7 @@ ul.dropdown-menu li.divider:first-child {
 .btn-zoom-out {
   position: absolute;
   top: 20px;
-  right: 20px;
+  left: 95px;
   display: none;
 }
 
@@ -173,18 +173,22 @@ ul.dropdown-menu li.divider:first-child {
   min-width: 55px;
 }
 
-.ma {
-  min-width: 150px;
-  margin-left: 85px !important;
-}
-
 .chart-container {
   margin-bottom: 25px;
 }
 
-.chart-container label {
+.chart-container .controls .ma, .chart-container .controls .series {
+  min-width: 175px;
+  margin: 0 5px;
+}
+
+.chart-container > label {
   display: block;
   text-align: center;
+}
+
+.chart-container .controls .select2-container {
+  text-align: left;
 }
 
 .filters {

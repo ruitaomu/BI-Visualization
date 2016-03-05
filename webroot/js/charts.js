@@ -47,8 +47,18 @@
           if ($el.is('.selected')) {
             $tags.find('.tag-' + tag).removeClass('selected');
             delete selectedTags[tag];
+
+            if (window.tagAnalysis) {
+              window.selectedTag = null;
+            }
           }
           else {
+            if (window.tagAnalysis) {
+              $tags.find('.selected').removeClass('selected');
+              selectedTags = {};
+              window.selectedTag = tag;
+            }
+
             $tags.find('.tag-' + tag).addClass('selected');
             selectedTags[tag] = true;
           }
@@ -87,7 +97,39 @@
     }
   }
 
-  function displayCharts() {
+  // get the list of data series present on this project/tester:
+  function getPresentSeries() {
+    var result = [];
+
+    if (index_attr && index_attr.length) {
+      for (var i = 0; i < index_attr.length; i++) {
+        var attr = index_attr[i].toLowerCase();
+
+        if (!index_data || !index_data[attr]) {
+          continue;
+        }
+
+        result.push({
+          id: attr,
+          text: index_attr[i]
+        });
+      }
+    }
+
+    return result;
+  }
+
+  function getAttrLabel(attr) {
+    if (index_attr && index_attr.length) {
+      for (var i = 0; i < index_attr.length; i++) {
+        if (index_attr[i].toLowerCase() == attr) {
+          return index_attr[i];
+        }
+      }
+    }
+  }
+
+  function displayCharts(max) {
     if (index_attr && index_attr.length) {
       for (var i = 0; i < index_attr.length; i++) {
         var attr = index_attr[i].toLowerCase();
@@ -97,27 +139,78 @@
         }
 
         charts[attr] = {
+          attr: attr,
+          avg: true,
+          avg2: false,
+
           $el: $([
             '<div class="chart-container">',
             '<label>', index_attr[i], '</label>',
             '<div class="chart"></div>',
+            '<div class="row controls">',
+            '<div class="col-lg-6" style="padding-left: 95px;">',
+            '<input type="hidden" value="', attr, '" class="series" data-attr="', attr, '">',
             '<input type="hidden" class="ma" placeholder="Moving Average" data-attr="', attr, '">',
+            '<label class="checkbox-inline"><input type="checkbox" checked data-attr="', attr, '"> Show average</label>',
+            '</div>',
+            '<div class="col-lg-6" style="text-align: right; padding-right: 30px;">',
+            '<input type="hidden" class="series" placeholder="Y2 Data" data-y2="true" data-attr="', attr, '">',
+            '<input type="hidden" class="ma" placeholder="Y2 Moving Average" data-y2="true" data-attr="', attr, '">',
+            '<label class="checkbox-inline"><input type="checkbox" data-y2="true" data-attr="', attr, '"> Show average</label>',
+            '</div>',
+            '</div>',
+            '&nbsp;',
+            '</div>',
             '</div>'
           ].join('')).appendTo('#charts')
         };
 
-        charts[attr].$el.find('input').select2({
+        charts[attr].$el.find('input.series').select2({
           minimumResultsForSearch: 10,
+          data: getPresentSeries(),
+          allowClear: true
+        }).change(function(e) {
+          var $el = $(this),
+              attr = $el.attr('data-attr'),
+              y2 = $el.attr('data-y2');
+
+          charts[attr]['attr' + (y2 ? '2' : '')] = $el.val();
+          displayChart(attr);
+          
+          zoom();
+        });
+
+        charts[attr].$el.find('input.ma').select2({
+          minimumResultsForSearch: 10,
+          allowClear: true,
           data: ma_attr
         }).change(function(e) {
           var $el = $(this),
-              attr = $el.attr('data-attr');
+              attr = $el.attr('data-attr'),
+              y2 = $el.attr('data-y2');
 
-          charts[attr].ma = $el.val();
+          charts[attr]['ma' + (y2 ? '2' : '')] = $el.val();
           displayChart(attr);
+
+          zoom();
+        });
+
+        charts[attr].$el.find('input[type="checkbox"]').click(function(e) {
+          var $el = $(this),
+              attr = $el.attr('data-attr'),
+              y2 = $el.attr('data-y2');
+
+          charts[attr]['avg' + (y2 ? '2' : '')] = $el.prop('checked');
+          displayChart(attr);
+
+          zoom();
         });
 
         displayChart(attr);
+
+        if (window.tagAnalysis) {
+          return;
+        }
       }
     }
   }
@@ -126,6 +219,12 @@
 
   function displayChart(attr) {
     var series = [];
+
+    var label = getAttrLabel(charts[attr].attr);
+    if (charts[attr].attr2) {
+      label += ' vs. ' + getAttrLabel(charts[attr].attr2);
+    }
+    charts[attr].$el.children('label').text(label);
 
     var $chart = charts[attr].$el.find('.chart');
 
@@ -136,10 +235,20 @@
           shadowSize: 0
         },
         xaxis: {
+          tickFormatter: function(val, axis) {
+            return sec2time(val * 400 / 1000);
+          }
         },
         yaxis: {
           labelWidth: 80
         },
+        yaxes: [
+          {},
+          {
+            position: 'right',
+            labelWidth: 80
+          }
+        ],
         selection: {
           mode: 'x'
         },
@@ -162,6 +271,17 @@
   }
 
   function refreshCharts() {
+    if (window.tagAnalysis) {
+      if (window.selectedTag) {
+        $('#charts').show();
+        $('#no-tag-selected').hide();
+      }
+      else {
+        $('#charts').hide();
+        $('#no-tag-selected').show();
+      }
+    }
+
     for (var attr in charts) {
       displayChart(attr);
     }
@@ -214,30 +334,96 @@
   }
 
   function getSeries(attr) {
+    if (window.tagAnalysis && !window.selectedTag) {
+      return [];
+    }
+
     if (typeof(charts[attr].color) == 'undefined') {
-      charts[attr].color = nextColor++;
+      charts[attr].color = nextColor;
+      nextColor += 2;
     }
 
     var series = [];
 
     // data:
+    var data = getFlotData(charts[attr].attr);
     series.push({
       color: charts[attr].color,
-      data: getFlotData(attr)
+      data: data
     });
 
-    var avg = index_data[attr].avg;
-    series.push({
-      color: 2,
-      data: [[0, avg], [index_data[attr].series.length, avg]]
-    });
+    if (charts[attr].avg) {
+      if (window.tagAnalysis) {
+        var avg = 0;
+        for (var i = 0; i < data.length; i++) {
+          avg += data[i][1];
+        }
+        avg /= data.length;
+
+        series.push({
+          color: 2,
+          data: [[0, avg], [data.length -1, avg]]
+        });
+      }
+      else {
+        var avg = index_data[charts[attr].attr].avg;
+        series.push({
+          color: 2,
+          data: [[0, avg], [index_data[charts[attr].attr].series.length, avg]]
+        });
+      }
+    }
 
     // moving average:
     if (charts[attr].ma) {
       series.push({
         color: 1,
-        data: getMAData(attr, charts[attr].ma)
+        data: getMAData(charts[attr].attr, charts[attr].ma)
       });
+    }
+
+    if (charts[attr].attr2) {
+      // data:
+      var data2 = getFlotData(charts[attr].attr2);
+
+      series.push({
+        color: charts[attr].color + 1,
+        data: data2,
+        yaxis: 2
+      });
+  
+      if (charts[attr].avg2) {
+        if (window.tagAnalysis) {
+          var avg = 0;
+          for (var i = 0; i < data2.length; i++) {
+            avg += data2[i][1];
+          }
+          avg /= data2.length;
+  
+          series.push({
+            color: 3,
+            data: [[0, avg], [data2.length -1, avg]],
+            yaxis: 2
+          });
+        }
+        else {
+          var avg = index_data[charts[attr].attr2].avg;
+          series.push({
+            color: 3,
+            data: [[0, avg], [index_data[charts[attr].attr2].series.length, avg]],
+            yaxis: 2
+          });
+        }
+      }
+
+      // moving average:
+      if (charts[attr].ma2) {
+        series.push({
+          color: 4,
+          data: getMAData(charts[attr].attr2, charts[attr].ma2),
+          yaxis: 2
+        });
+      }
     }
 
     return series;
@@ -245,7 +431,7 @@
 
   // determine the intervals we need to "nullify" from the data, based on what
   // tags are selected:
-  function getIntervals(attr) {
+  function getIntervals(attr, include) {
     var selTags = [];
     for (var tag in selectedTags) {
       selTags.push(tag);
@@ -270,6 +456,10 @@
       return a.s - b.s;
     });
 
+    if (include) {
+      return intervals;
+    }
+
     var result = [];
     var start = 0;
     for (var i = 0; i < intervals.length; i++) {
@@ -291,15 +481,38 @@
   function getFlotData(attr) {
     var data = [];
 
-    for (var i = 0; i < index_data[attr].series.length; i++) {
-      data.push([i, index_data[attr].series[i]]);
-    }
+    if (window.tagAnalysis) {
+      var intervals = getIntervals(attr, true);
+      if (intervals) {
+        var k, counts = [];
+        for (var i = 0; i < intervals.length; i++) {
+          k = 0;
+          for (j = intervals[i].s; j < intervals[i].e; j++) {
+            if (!data[k]) data[k] = [k, 0];
+            if (!counts[k]) counts[k] = 0;
 
-    var intervals = getIntervals(attr);
-    if (intervals) {
-      for (var i = 0; i < intervals.length; i++) {
-        for (j = intervals[i].s; j <= intervals[i].e; j++) {
-          data[j][1] = null;
+            data[k][1] += index_data[attr].series[j];
+            counts[k]++;
+            k++;
+          }
+        }
+
+        for (var i = 0; i < data.length; i++) {
+          data[i][1] /= counts[i];
+        }
+      }
+    }
+    else {
+      for (var i = 0; i < index_data[attr].series.length; i++) {
+        data.push([i, index_data[attr].series[i]]);
+      }
+
+      var intervals = getIntervals(attr);
+      if (intervals) {
+        for (var i = 0; i < intervals.length; i++) {
+          for (j = intervals[i].s; j < intervals[i].e; j++) {
+            data[j][1] = null;
+          }
         }
       }
     }
@@ -315,12 +528,15 @@
       return [];
     }
 
+    var sourceData = getFlotData(attr);
+
     if (period == 1) {
-      return getFlotData(attr);
+      return sourceData;
+      //return getFlotData(attr);
     }
 
-    var s = 0;
-    for (var i = 0; i < index_data[attr].series.length; i++) {
+    var s = 0, k = 0;
+    /*for (var i = 0; i < index_data[attr].series.length; i++) {
       s += index_data[attr].series[i];
       if (i >= period - 1) {
         data.push([i, s / period]);
@@ -329,16 +545,32 @@
       else {
         data.push([i, null]);
       }
-    }
-
-    var intervals = getIntervals(attr);
-    if (intervals) {
-      for (var i = 0; i < intervals.length; i++) {
-        for (j = intervals[i].s; j <= intervals[i].e; j++) {
-          data[j][1] = null;
+    }*/
+    for (var i = 0; i < sourceData.length; i++) {
+      if (sourceData[i][1] === null) {
+        s = k = 0;
+      }
+      else {
+        s += sourceData[i][1];
+        k++;
+        if (k >= period) {
+          data.push([i, s / period]);
+          s -= sourceData[i - period + 1][1];
+        }
+        else {
+          data.push([i, null]);
         }
       }
     }
+
+    /*var intervals = getIntervals(attr);
+    if (intervals) {
+      for (var i = 0; i < intervals.length; i++) {
+        for (j = intervals[i].s; j < intervals[i].e; j++) {
+          data[j][1] = null;
+        }
+      }
+      }*/
 
     return data;
   }

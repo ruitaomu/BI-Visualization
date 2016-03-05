@@ -179,6 +179,59 @@ class projects_controller extends front_controller {
 
         $ma = array_values(attribute_model::values('ma'));
         $ma_attr = array(array('id' => 0, 'text' => 'Moving Average'));
+        $ma_attr = array();
+        foreach ($ma as $x) {
+          $ma_attr[] = array('id' => $x, 'text' => $x);
+        }
+        $this->set('ma_attr_json', json_encode($ma_attr));
+
+        $tester_data = $this->model->get_testers($tester_id);
+        $this->set('tester_data', $tester_data[0]);
+      }
+
+      $this->set($this->model->get());
+		}
+  }
+
+  public function action_project_tag_analysis() {
+		$id = $this->params->get('id', 0);
+		$this->model->load($id);
+		$item = array();
+
+    $this->set('tab', 'tag_analysis');
+
+		if ($id > 0) {
+			if (!$this->model->exists() || !$this->model->access_allowed()) {
+				return response::access_denied();
+			}
+
+      // get the list of testers for this project:
+      $tester_opt = $this->model->get_testers_opt();
+      $this->set('tester_opt', $tester_opt);
+
+      $tester_id = $this->params->tester_id;
+      if (empty($tester_id)) {
+        $tester_ids = array_keys($tester_opt);
+        if (count($tester_ids) > 0) {
+          $tester_id = $tester_ids[0];
+        }
+      }
+
+      $this->set('tester_id', $tester_id);
+
+      if (!empty($tester_id)) {
+        $tags = $this->model->get_tags($tester_id);
+        $this->set('tags_json', json_encode($tags));
+
+        $index_data = $this->model->get_index_data($tester_id);
+        $this->set('index_data_json', json_encode($index_data));
+
+        $index_attr = array_values(attribute_model::values('index_data'));
+        $this->set('index_attr_json', json_encode($index_attr));
+
+        $ma = array_values(attribute_model::values('ma'));
+        $ma_attr = array(array('id' => 0, 'text' => 'Moving Average'));
+        $ma_attr = array();
         foreach ($ma as $x) {
           $ma_attr[] = array('id' => $x, 'text' => $x);
         }
