@@ -202,3 +202,7 @@ ul.dropdown-menu li.divider:first-child {
 .filters select {
   margin-bottom: 5px;
 }
+
+.pieLabel div {
+  font-size: 12px !important;
+}
