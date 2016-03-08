@@ -189,8 +189,13 @@ ul.dropdown-menu li.divider:first-child {
   margin-bottom: 25px;
 }
 
-.chart-container .controls .ma, .chart-container .controls .series {
-  min-width: 175px;
+.chart-container .controls .series {
+  min-width: 125px;
+  margin: 0 5px;
+}
+
+.chart-container .controls .ma {
+  min-width: 165px;
   margin: 0 5px;
 }
 
