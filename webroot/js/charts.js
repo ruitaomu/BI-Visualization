@@ -21,26 +21,28 @@
         t_s = tags.tag[tag][i].t_s * 1;
         t_e = tags.tag[tag][i].t_e * 1;
         
-        var $tag = $('<div></div>').attr('data-tag', tag).addClass('tag-' + tag).css({
+        var $tag = $('<div></div>').attr('data-tag', tag).addClass('tag tag-' + tag).css({
           'left': (t_s / max_ts * 100) + '%',
           'width': ((t_e - t_s) / max_ts * 100) + '%',
           'background-color': 'rgba(' + tags_color[tag] + ',1)'
         }).hover(
           function(e) {
-            var $el = $(e.target);
+            var $el = $(e.target).closest('.tag');
             var $tags = $el.closest('.tags');
 
             $tags.children('.active').removeClass('active');
             $tags.children('.tag-' + $el.attr('data-tag')).addClass('active');
+	    $el.addClass('hover');
           },
           function(e) {
-            var $el = $(e.target);
+            var $el = $(e.target).closest('.tag');
             var $tags = $el.closest('.tags');
 
             $tags.children('.active').removeClass('active');
+	    $el.removeClass('hover');
           }
         ).click(function(e) {
-          var $el = $(e.target),
+          var $el = $(e.target).closest('.tag'),
 	      tag = $el.attr('data-tag');
 
           if ($el.is('.selected')) {
@@ -51,8 +53,8 @@
           }
         }).appendTo($tags);
 
-        $('<div class="t_s"></div>').text(sec2time(t_s / 1000)).appendTo($tag);
-        $('<div class="t_e"></div>').text(sec2time(t_e / 1000)).appendTo($tag);
+        $('<div class="t_s"><span>' + sec2time(t_s / 1000) + '</span></div>').appendTo($tag);
+        $('<div class="t_e"><span>' + sec2time(t_e / 1000) + '</span></div>').appendTo($tag);
       }
 
       // legend:
@@ -269,7 +271,11 @@
         },
         crosshair: {
           mode: 'x'
-        }
+        },
+	legend: {
+	  show: true,
+	  noColumns: 6 
+	}
       }
     );
 
@@ -363,6 +369,7 @@
     // data:
     var data = getFlotData(charts[attr].attr);
     series.push({
+      label: '&nbsp;' + getAttrLabel(charts[attr].attr) + '&nbsp;&nbsp;&nbsp;',
       color: charts[attr].color,
       data: data
     });
@@ -376,6 +383,7 @@
         avg /= data.length;
 
         series.push({
+          label: '&nbsp;' + getAttrLabel(charts[attr].attr) + ' Avg&nbsp;&nbsp;&nbsp;',
           color: 2,
           data: [[0, avg], [data.length -1, avg]]
         });
@@ -383,6 +391,7 @@
       else {
         var avg = index_data[charts[attr].attr].avg;
         series.push({
+          label: '&nbsp;' + getAttrLabel(charts[attr].attr) + ' Avg&nbsp;&nbsp;&nbsp;',
           color: 2,
           data: [[0, avg], [index_data[charts[attr].attr].series.length, avg]]
         });
@@ -392,6 +401,7 @@
     // moving average:
     if (charts[attr].ma) {
       series.push({
+        label: '&nbsp;' + getAttrLabel(charts[attr].attr) + ' MA-' + charts[attr].ma + '&nbsp;&nbsp;&nbsp;',
         color: 1,
         data: getMAData(charts[attr].attr, charts[attr].ma)
       });
@@ -402,6 +412,7 @@
       var data2 = getFlotData(charts[attr].attr2);
 
       series.push({
+        label: '&nbsp;' + getAttrLabel(charts[attr].attr2) + '&nbsp;&nbsp;&nbsp;',
         color: charts[attr].color + 1,
         data: data2,
         yaxis: 2
@@ -416,6 +427,7 @@
           avg /= data2.length;
   
           series.push({
+	    label: '&nbsp;' + getAttrLabel(charts[attr].attr2) + ' Avg&nbsp;&nbsp;&nbsp;',
             color: 3,
             data: [[0, avg], [data2.length -1, avg]],
             yaxis: 2
@@ -424,6 +436,7 @@
         else {
           var avg = index_data[charts[attr].attr2].avg;
           series.push({
+	    label: '&nbsp;' + getAttrLabel(charts[attr].attr2) + ' Avg&nbsp;&nbsp;&nbsp;',
             color: 3,
             data: [[0, avg], [index_data[charts[attr].attr2].series.length, avg]],
             yaxis: 2
@@ -434,6 +447,7 @@
       // moving average:
       if (charts[attr].ma2) {
         series.push({
+	  label: '&nbsp;' + getAttrLabel(charts[attr].attr2) + ' MA-' + charts[attr].ma2 + '&nbsp;&nbsp;&nbsp;',
           color: 4,
           data: getMAData(charts[attr].attr2, charts[attr].ma2),
           yaxis: 2

@@ -60,6 +60,10 @@ ul.dropdown-menu li.divider:first-child {
   text-align: center;
 }
 
+.tags > div > div.t_s span, .tags > div > div.t_e span {
+  display: none;
+}
+
 .tags > div > div.t_s {
   bottom: 100%;
   left: 0;
@@ -94,8 +98,12 @@ ul.dropdown-menu li.divider:first-child {
   top: -45px;
 }
 
-.tags > div.active, .tags > div.selected {
+.tags > div.active {
   z-index: 99;
+}
+
+.tags > div.selected {
+  z-index: 98;
 }
 
 .tags > div.selected {
@@ -105,6 +113,10 @@ ul.dropdown-menu li.divider:first-child {
 
 .tags > div.active > div.t_s, .tags > div.active > div.t_e,
 .tags > div.selected > div.t_s, .tags > div.selected > div.t_e {
+  display: block;
+}
+
+.tags > div.hover > div.t_s span, .tags > div.hover > div.t_e span {
   display: block;
 }
 
