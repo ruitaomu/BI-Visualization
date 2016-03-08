@@ -41,29 +41,14 @@
           }
         ).click(function(e) {
           var $el = $(e.target),
-              $tags = $el.closest('.tags'),
-              tag = $el.attr('data-tag');
+	      tag = $el.attr('data-tag');
 
           if ($el.is('.selected')) {
-            $tags.find('.tag-' + tag).removeClass('selected');
-            delete selectedTags[tag];
-
-            if (window.tagAnalysis) {
-              window.selectedTag = null;
-            }
+	    unselectTag(tag);
           }
           else {
-            if (window.tagAnalysis) {
-              $tags.find('.selected').removeClass('selected');
-              selectedTags = {};
-              window.selectedTag = tag;
-            }
-
-            $tags.find('.tag-' + tag).addClass('selected');
-            selectedTags[tag] = true;
+	    selectTag(tag);
           }
-
-          refreshCharts();
         }).appendTo($tags);
 
         $('<div class="t_s"></div>').text(sec2time(t_s / 1000)).appendTo($tag);
@@ -83,8 +68,37 @@
 
   window.displayTags = displayTags;
 
+  function selectTag(tag) {
+    var $tags = $('#tags');
+
+    if (window.tagAnalysis) {
+      $tags.find('.selected').removeClass('selected');
+      selectedTags = {};
+      window.selectedTag = tag;
+    }
+
+    $tags.find('.tag-' + tag).addClass('selected');
+    selectedTags[tag] = true;
+
+    refreshCharts();
+  }
+
+  function unselectTag(tag) {
+    var $tags = $('#tags');
+
+    $tags.find('.tag-' + tag).removeClass('selected');
+    delete selectedTags[tag];
+
+    if (window.tagAnalysis) {
+      window.selectedTag = null;
+    }
+    
+    refreshCharts();
+  }
+
   function toggleTag($li) {
     var tag = $li.attr('data-tag');
+
     if ($li.hasClass('is-hidden')) {
       // show:
       $('#tags').find('.tag-' + tag).show();
@@ -94,6 +108,7 @@
       // hide:
       $('#tags').find('.tag-' + tag).hide();
       $li.addClass('is-hidden');
+      unselectTag(tag);
     }
   }
 
