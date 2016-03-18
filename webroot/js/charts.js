@@ -32,26 +32,16 @@
 
             $tags.children('.active').removeClass('active');
             $tags.children('.tag-' + $el.attr('data-tag')).addClass('active');
-	    $el.addClass('hover');
+	          $el.addClass('hover');
           },
           function(e) {
             var $el = $(e.target).closest('.tag');
             var $tags = $el.closest('.tags');
 
             $tags.children('.active').removeClass('active');
-	    $el.removeClass('hover');
+	          $el.removeClass('hover');
           }
-        ).click(function(e) {
-          var $el = $(e.target).closest('.tag'),
-	      tag = $el.attr('data-tag');
-
-          if ($el.is('.selected')) {
-	    unselectTag(tag);
-          }
-          else {
-	    selectTag(tag);
-          }
-        }).appendTo($tags);
+        ).appendTo($tags);
 
         $('<div class="t_s"><span>' + sec2time(t_s / 1000) + '</span></div>').appendTo($tag);
         $('<div class="t_e"><span>' + sec2time(t_e / 1000) + '</span></div>').appendTo($tag);
@@ -66,9 +56,51 @@
     $legend.on('click', function(e) {
       toggleTag($(e.target).closest('li'));
     });
+
+    var lastClickAt = 0,
+        timer;
+    $tags.on('click', function(e) {
+      var t = (new Date()).getTime();
+
+      if (lastClickAt && t - lastClickAt < 200) {
+        clearTimeout(timer);
+
+        var max = $tags.width(),
+            x = e.pageX - $tags.offset().left,
+            prc = x / max * 100;
+
+        seek(prc);
+        clearSelection();
+      }
+      else {
+        timer = setTimeout(function() {
+          var $el = $(e.target).closest('.tag'),
+	            tag = $el.attr('data-tag');
+
+          if ($el.is('.selected')) {
+	          unselectTag(tag);
+          }
+          else {
+	          selectTag(tag);
+          }
+        }, 200);
+      }
+
+      lastClickAt = t;
+    });
   }
 
   window.displayTags = displayTags;
+
+  function clearSelection() {
+    if(document.selection && document.selection.empty) {
+      document.selection.empty();
+    }
+    else if (window.getSelection) {
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+    }
+  }
 
   function selectTag(tag) {
     var $tags = $('#tags');
@@ -245,7 +277,7 @@
 
     var $chart = charts[attr].$el.find('.chart');
 
-    charts[attr].plot = $.plot($chart,
+    var plot = charts[attr].plot = $.plot($chart,
       getSeries(attr),
       {
         series: {
@@ -272,10 +304,14 @@
         crosshair: {
           mode: 'x'
         },
-	legend: {
-	  show: true,
-	  noColumns: 6 
-	}
+	      legend: {
+	        show: true,
+	        noColumns: 6 
+        },
+        grid: {
+          clickable: true,
+          autoHighlight: false
+        }
       }
     );
 
@@ -284,8 +320,24 @@
       zoom();
     });
 
+    $chart.unbind();
+
     $chart.bind('plotselected', function(e, ranges) {
       zoom(ranges);
+    });
+
+    var lastClickAt = 0;
+    $chart.bind('plotclick', function(e, pos) {
+      var t = (new Date()).getTime();
+
+      if (lastClickAt && t - lastClickAt < 200) {
+        var max = plot.getXAxes()[0].datamax,
+            prc = pos.x / max * 100;
+
+        seek(prc);
+      }
+
+      lastClickAt = t;
     });
 
     crosshair();
@@ -651,4 +703,12 @@
     return time.join(':');
   }
 
+  function seek(prc) {
+    if (!window.player || !window.player.hasData()) {
+      return;
+    }
+
+    var pos = window.player.duration() * prc / 100;
+    window.player.time(pos);
+  }
 })();

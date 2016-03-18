@@ -94,6 +94,8 @@
     window._wq = window._wq || [];
     _wq.push({
       '_all': function(video) {
+        window.player = video;
+
         video.bind('timechange', function(t) {
           var p = t / video.duration() * 100;
           updateVideoProgress(p, t);
