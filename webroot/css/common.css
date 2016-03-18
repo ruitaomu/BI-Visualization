@@ -223,3 +223,7 @@ ul.dropdown-menu li.divider:first-child {
 .pieLabel div {
   font-size: 12px !important;
 }
+
+.axis-selected {
+  opacity: 0.10 !important;
+}

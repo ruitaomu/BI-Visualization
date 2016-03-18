@@ -262,6 +262,16 @@
         }
       }
     }
+
+    // close any popovers when clicking outside:
+    $('body').on('click', function(e) {
+      var $el = $(e.target);
+      if (!$el.closest('.popover').length) {
+        if (!$el.closest('.axis-target').length) {
+          closePopover();
+        }
+      }
+    });
   }
 
   window.displayCharts = displayCharts;
@@ -288,14 +298,17 @@
             return sec2time(val * 400 / 1000);
           }
         },
-        yaxis: {
-          labelWidth: 80
-        },
         yaxes: [
-          {},
+          {
+            labelWidth: 80,
+            min: charts[attr].min,
+            max: charts[attr].max
+          },
           {
             position: 'right',
-            labelWidth: 80
+            labelWidth: 80,
+            min: charts[attr].min2,
+            max: charts[attr].max2
           }
         ],
         selection: {
@@ -340,7 +353,99 @@
       lastClickAt = t;
     });
 
+    // interact with the Y axes:
+    $(plot.getPlaceholder()).find('.axis-target').remove();
+    $.each(plot.getYAxes(), function(i, axis) {
+      if (!axis.show) {
+        return;
+      }
+
+      var box = axis.box;
+      var id = 'a' + Math.floor(Math.random() * 10e6);
+
+      $('<a href="javascript:;"></a>').attr('id', id).addClass('axis-target').css({
+        position: 'absolute',
+        display: 'block',
+        left: box.left + 'px',
+        top: box.top + 'px',
+        width: box.width + 'px',
+        height: box.height + 'px',
+        'background-color': '#f00',
+        opacity: 0,
+        cursor: 'pointer'
+      }).hover(
+        function() { $(this).addClass('axis-selected'); },
+        function() { $(this).removeClass('axis-selected'); }
+      ).click(function() {
+        $(this).css('opacity', 0.10);
+        openPopover(id);
+      }).popover({
+        placement: i == 0 ? 'right': 'left',
+        content: [
+          '<form id="f', id, '" data-attr="', attr, '" data-axis="', i, '">',
+          '<div class="row" style="margin-bottom: 5px;">',
+          '<div class="col-xs-6"><input name="min" type="text" value="', (i == 0 ? charts[attr].min : charts[attr].min2) || '', '" class="form-control" placeholder="Min"></div>',
+          '<div class="col-xs-6"><input name="max" type="text" value="', (i == 0 ? charts[attr].max : charts[attr].max2) || '', '" class="form-control" placeholder="Max"></div>',
+          '</div>',
+          '<a href="javascript: setAxisRange();" class="btn btn-danger btn-sm">Update</a>',
+          '</form>'
+        ].join(''),
+        html: true,
+        trigger: 'manual',
+        title: 'Set Axis Range'
+      }).appendTo(plot.getPlaceholder());
+    });
+
     crosshair();
+  }
+
+  window.setAxisRange = function() {
+    if (!window.openedPopover) {
+      return;
+    }
+
+    var $form = $('form#f' + window.openedPopover),
+        attr = $form.attr('data-attr'),
+        axis = parseInt($form.attr('data-axis')),
+        min = $form.find('[name="min"]').val(),
+        max = $form.find('[name="max"]').val();
+
+    if (min) {
+      min = parseFloat(min);
+    }
+    else {
+      min = null;
+    }
+
+    if (max) {
+      max = parseFloat(max);
+    }
+    else {
+      max = null;
+    }
+
+    charts[attr]['min' + (axis ? '2' : '')] = min;
+    charts[attr]['max' + (axis ? '2' : '')] = max;
+
+    displayChart(attr);
+
+    closePopover();
+  };
+
+  function openPopover(id) {
+    if (window.openedPopover && window.openedPopover != id) {
+      closePopover(window.openedPopover);
+    }
+
+    window.openedPopover = id;
+    $('#' + id).popover('show');
+  }
+
+  function closePopover(id) {
+    window.openedPopover = null;
+
+    var $el = (id ? $('#' + id) : $('.axis-target'));
+    $el.css('opacity', 0).popover('hide');
   }
 
   function refreshCharts() {
