@@ -205,41 +205,31 @@ class projects_controller extends front_controller {
 				return response::access_denied();
 			}
 
+      if ($this->req->is('post')) {
+        $params = json_decode($this->params->json, true);
+
+        $index_data = $this->model->get_tag_analysis_data($params);
+
+			  return response::ajax_success($index_data);
+      }
+
       // get the list of testers for this project:
       $tester_opt = $this->model->get_testers_opt();
       $this->set('tester_opt', $tester_opt);
 
-      $tester_id = $this->params->tester_id;
-      if (empty($tester_id)) {
-        $tester_ids = array_keys($tester_opt);
-        if (count($tester_ids) > 0) {
-          $tester_id = $tester_ids[0];
-        }
+      $tags = $this->model->get_all_tags();
+      $this->set('tags', $tags);
+
+      $index_attr = array_values(attribute_model::values('index_data'));
+      $this->set('index_attr_json', json_encode($index_attr));
+
+      $ma = array_values(attribute_model::values('ma'));
+      $ma_attr = array(array('id' => 0, 'text' => 'Moving Average'));
+      $ma_attr = array();
+      foreach ($ma as $x) {
+        $ma_attr[] = array('id' => $x, 'text' => $x);
       }
-
-      $this->set('tester_id', $tester_id);
-
-      if (!empty($tester_id)) {
-        $tags = $this->model->get_tags($tester_id);
-        $this->set('tags_json', json_encode($tags));
-
-        $index_data = $this->model->get_index_data($tester_id);
-        $this->set('index_data_json', json_encode($index_data));
-
-        $index_attr = array_values(attribute_model::values('index_data'));
-        $this->set('index_attr_json', json_encode($index_attr));
-
-        $ma = array_values(attribute_model::values('ma'));
-        $ma_attr = array(array('id' => 0, 'text' => 'Moving Average'));
-        $ma_attr = array();
-        foreach ($ma as $x) {
-          $ma_attr[] = array('id' => $x, 'text' => $x);
-        }
-        $this->set('ma_attr_json', json_encode($ma_attr));
-
-        $tester_data = $this->model->get_testers($tester_id);
-        $this->set('tester_data', $tester_data[0]);
-      }
+      $this->set('ma_attr_json', json_encode($ma_attr));
 
       $this->set($this->model->get());
 		}

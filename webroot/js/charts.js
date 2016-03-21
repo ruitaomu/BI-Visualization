@@ -5,6 +5,18 @@
       selectedTags = {},
       cache = {data: {}, ma: {}};
 
+  $(function() {
+    // close any popovers when clicking outside:
+    $('body').on('click', function(e) {
+      var $el = $(e.target);
+      if (!$el.closest('.popover').length) {
+        if (!$el.closest('.axis-target').length) {
+          closePopover();
+        }
+      }
+    });
+  });
+
   function displayTags() {
     var $tags = $('#tags');
     var $legend = $('#legend');
@@ -105,12 +117,6 @@
   function selectTag(tag) {
     var $tags = $('#tags');
 
-    if (window.tagAnalysis) {
-      $tags.find('.selected').removeClass('selected');
-      selectedTags = {};
-      window.selectedTag = tag;
-    }
-
     $tags.find('.tag-' + tag).addClass('selected');
     selectedTags[tag] = true;
 
@@ -123,10 +129,6 @@
     $tags.find('.tag-' + tag).removeClass('selected');
     delete selectedTags[tag];
 
-    if (window.tagAnalysis) {
-      window.selectedTag = null;
-    }
-    
     refreshCharts();
   }
 
@@ -178,7 +180,7 @@
     }
   }
 
-  function displayCharts(max) {
+  function displayCharts() {
     if (index_attr && index_attr.length) {
       for (var i = 0; i < index_attr.length; i++) {
         var attr = index_attr[i].toLowerCase();
@@ -189,7 +191,7 @@
 
         charts[attr] = {
           attr: attr,
-          avg: true,
+          avg: (window.tagAnalysis ? false : true),
           avg2: false,
 
           $el: $([
@@ -200,12 +202,12 @@
             '<div class="col-lg-6" style="padding-left: 95px;">',
             '<input type="hidden" value="', attr, '" class="series" data-attr="', attr, '">',
             '<input type="hidden" class="ma" placeholder="Moving Average" data-attr="', attr, '">',
-            '<label class="checkbox-inline"><input type="checkbox" checked data-attr="', attr, '"> Show average</label>',
+            (window.tagAnalysis ? '' : '<label class="checkbox-inline"><input type="checkbox" checked data-attr="' + attr + '"> Show average</label>'),
             '</div>',
             '<div class="col-lg-6" style="text-align: right; padding-right: 30px;">',
             '<input type="hidden" class="series" placeholder="Y2 Data" data-y2="true" data-attr="', attr, '">',
             '<input type="hidden" class="ma" placeholder="Y2 Moving Average" data-y2="true" data-attr="', attr, '">',
-            '<label class="checkbox-inline"><input type="checkbox" data-y2="true" data-attr="', attr, '"> Show average</label>',
+            (window.tagAnalysis ? '' : '<label class="checkbox-inline"><input type="checkbox" data-y2="true" data-attr="' + attr + '"> Show average</label>'),
             '</div>',
             '</div>',
             '&nbsp;',
@@ -263,15 +265,6 @@
       }
     }
 
-    // close any popovers when clicking outside:
-    $('body').on('click', function(e) {
-      var $el = $(e.target);
-      if (!$el.closest('.popover').length) {
-        if (!$el.closest('.axis-target').length) {
-          closePopover();
-        }
-      }
-    });
   }
 
   window.displayCharts = displayCharts;
@@ -449,21 +442,12 @@
   }
 
   function refreshCharts() {
-    if (window.tagAnalysis) {
-      if (window.selectedTag) {
-        $('#charts').show();
-        $('#no-tag-selected').hide();
-      }
-      else {
-        $('#charts').hide();
-        $('#no-tag-selected').show();
-      }
-    }
-
     for (var attr in charts) {
       displayChart(attr);
     }
   }
+
+  window.refreshCharts = refreshCharts;
 
   function crosshair(p) {
     if (p === undefined) {
@@ -512,10 +496,6 @@
   }
 
   function getSeries(attr) {
-    if (window.tagAnalysis && !window.selectedTag) {
-      return [];
-    }
-
     if (typeof(charts[attr].color) == 'undefined') {
       charts[attr].color = nextColor;
       nextColor += 2;
@@ -532,27 +512,12 @@
     });
 
     if (charts[attr].avg) {
-      if (window.tagAnalysis) {
-        var avg = 0;
-        for (var i = 0; i < data.length; i++) {
-          avg += data[i][1];
-        }
-        avg /= data.length;
-
-        series.push({
-          label: '&nbsp;' + getAttrLabel(charts[attr].attr) + ' Avg&nbsp;&nbsp;&nbsp;',
-          color: 2,
-          data: [[0, avg], [data.length -1, avg]]
-        });
-      }
-      else {
-        var avg = index_data[charts[attr].attr].avg;
-        series.push({
-          label: '&nbsp;' + getAttrLabel(charts[attr].attr) + ' Avg&nbsp;&nbsp;&nbsp;',
-          color: 2,
-          data: [[0, avg], [index_data[charts[attr].attr].series.length, avg]]
-        });
-      }
+      var avg = index_data[charts[attr].attr].avg;
+      series.push({
+        label: '&nbsp;' + getAttrLabel(charts[attr].attr) + ' Avg&nbsp;&nbsp;&nbsp;',
+        color: 2,
+        data: [[0, avg], [index_data[charts[attr].attr].series.length, avg]]
+      });
     }
 
     // moving average:
@@ -576,29 +541,13 @@
       });
   
       if (charts[attr].avg2) {
-        if (window.tagAnalysis) {
-          var avg = 0;
-          for (var i = 0; i < data2.length; i++) {
-            avg += data2[i][1];
-          }
-          avg /= data2.length;
-  
-          series.push({
-	    label: '&nbsp;' + getAttrLabel(charts[attr].attr2) + ' Avg&nbsp;&nbsp;&nbsp;',
-            color: 3,
-            data: [[0, avg], [data2.length -1, avg]],
-            yaxis: 2
-          });
-        }
-        else {
-          var avg = index_data[charts[attr].attr2].avg;
-          series.push({
-	    label: '&nbsp;' + getAttrLabel(charts[attr].attr2) + ' Avg&nbsp;&nbsp;&nbsp;',
-            color: 3,
-            data: [[0, avg], [index_data[charts[attr].attr2].series.length, avg]],
-            yaxis: 2
-          });
-        }
+        var avg = index_data[charts[attr].attr2].avg;
+        series.push({
+	        label: '&nbsp;' + getAttrLabel(charts[attr].attr2) + ' Avg&nbsp;&nbsp;&nbsp;',
+          color: 3,
+          data: [[0, avg], [index_data[charts[attr].attr2].series.length, avg]],
+          yaxis: 2
+        });
       }
 
       // moving average:
@@ -632,8 +581,8 @@
       for (var j = 0; j < tags.tag[selTags[i]].length; j++) {
         var seq = tags.tag[selTags[i]][j];
         intervals.push({
-          s: Math.max(0, Math.min(Math.round(seq.t_s / 400), index_data[attr].series.length - 1)),
-          e: Math.max(0, Math.min(Math.round(seq.t_e / 400), index_data[attr].series.length - 1))
+          s: Math.max(0, Math.min(Math.floor(seq.t_s / 400), index_data[attr].series.length - 1)),
+          e: Math.max(0, Math.min(Math.floor(seq.t_e / 400), index_data[attr].series.length - 1))
         });
       }
     }
@@ -667,38 +616,15 @@
   function getFlotData(attr) {
     var data = [];
 
-    if (window.tagAnalysis) {
-      var intervals = getIntervals(attr, true);
-      if (intervals) {
-        var k, counts = [];
-        for (var i = 0; i < intervals.length; i++) {
-          k = 0;
-          for (j = intervals[i].s; j < intervals[i].e; j++) {
-            if (!data[k]) data[k] = [k, 0];
-            if (!counts[k]) counts[k] = 0;
-
-            data[k][1] += index_data[attr].series[j];
-            counts[k]++;
-            k++;
-          }
-        }
-
-        for (var i = 0; i < data.length; i++) {
-          data[i][1] /= counts[i];
-        }
-      }
+    for (var i = 0; i < index_data[attr].series.length; i++) {
+      data.push([i, index_data[attr].series[i]]);
     }
-    else {
-      for (var i = 0; i < index_data[attr].series.length; i++) {
-        data.push([i, index_data[attr].series[i]]);
-      }
 
-      var intervals = getIntervals(attr);
-      if (intervals) {
-        for (var i = 0; i < intervals.length; i++) {
-          for (j = intervals[i].s; j < intervals[i].e; j++) {
-            data[j][1] = null;
-          }
+    var intervals = getIntervals(attr);
+    if (intervals) {
+      for (var i = 0; i < intervals.length; i++) {
+        for (j = intervals[i].s; j < intervals[i].e; j++) {
+          data[j][1] = null;
         }
       }
     }

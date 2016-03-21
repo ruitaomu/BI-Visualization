@@ -322,16 +322,24 @@ class project_model extends app_model {
   /**
    * Get tags for a tester on this project.
    */
-  public function get_tags($tester_id, $id = null) {
+  public function get_tags($tester_id, $tags = array(), $id = null) {
     if (!($id = $this->require_id($id))) {
       return false;
     }
+
+    $tags_filter = array();
+    foreach ($tags as $tag => $seqs) {
+      $seqs = implode(',', array_map(function($seq) { return "'$seq'"; }, $seqs));
+      $tags_filter[] = "(tag = '$tag' AND seq IN ($seqs))";
+    }
+    $tags_filter = implode(' OR ', $tags_filter);
 
     $tb = tb('tag');
     $qstr = implode(' ', array(
       "SELECT *",
       "FROM $tb",
       "WHERE project_id = '$id' AND tester_id = :tester_id",
+      (!empty($tags_filter) ? "AND ($tags_filter)" : ''),
       "ORDER BY tag, seq"
     ));
     $q = $this->query($qstr, array('tester_id' => $tester_id));
@@ -354,6 +362,50 @@ class project_model extends app_model {
         't_s' => $res['t_s'],
         't_e' => $res['t_e']
       );
+    }
+
+    return $results;
+  }
+
+  /**
+   * Get all tags (for all tester) on this project and indicate which testers
+   * has which tag.
+   */
+  public function get_all_tags($id = null) {
+    if (!($id = $this->require_id($id))) {
+      return false;
+    }
+
+    $tb = tb('tag');
+    $qstr = implode(' ', array(
+      "SELECT *",
+      "FROM $tb",
+      "WHERE project_id = '$id'",
+      "ORDER BY tag, seq"
+    ));
+    $q = $this->query($qstr);
+
+    $results = array();
+    while (is_array($res = $q->getrow())) {
+      if (!isset($results[$res['tag']])) {
+        $results[$res['tag']] = array(
+          'testers' => array(),
+          'seq' => array()
+        );
+      }
+
+      $results[$res['tag']]['testers']['t-' . $res['tester_id']] = true;
+
+      if (!isset($results[$res['tag']]['seq'][$res['seq']])) {
+        $results[$res['tag']]['seq'][$res['seq']] = 't-' . $res['tester_id'];
+      }
+      else {
+        $results[$res['tag']]['seq'][$res['seq']] .= " t-$res[tester_id]";
+      }
+    }
+
+    foreach ($results as $tag => $data) {
+      $results[$tag]['testers'] = implode(' ', array_keys($data['testers']));
     }
 
     return $results;
@@ -416,6 +468,69 @@ class project_model extends app_model {
         return $results;
       }
     }
+  }
+
+  /**
+   * Get tag analysis data for this project.
+   */
+  public function get_tag_analysis_data($params, $id = null) {
+    if (!($id = $this->require_id($id))) {
+      return false;
+    }
+
+    $results = array();
+
+    foreach ($params['testers'] as $tester_id) {
+      $tags = $this->get_tags($tester_id, $params['tags']);
+      $index_data = $this->get_index_data($tester_id);
+
+      // slice index data based on selected tags and add it to the results:
+      foreach ($index_data as $attr => $data) {
+        foreach ($tags['tag'] as $tag => $seqs) {
+          foreach ($seqs as $seq) {
+            $start = max(0, min(floor($seq['t_s'] / 400), count($data['series']) - 1));
+            $end = max(0, min(floor($seq['t_e'] / 400), count($data['series']) - 1));
+            $segment = array_slice($data['series'], $start, $end - $start + 1);
+            if ($params['tail']) {
+              $segment = array_reverse($segment);
+            }
+
+            if (!isset($results[$attr])) {
+              $results[$attr] = array('series' => array());
+            }
+
+            for ($i = 0; $i < count($segment); $i++) {
+              if (!isset($results[$attr]['series'][$i])) {
+                $results[$attr]['series'][$i] = array(
+                  'sum' => $segment[$i],
+                  'count' => 1
+                );
+              }
+              else {
+                $results[$attr]['series'][$i]['sum'] += $segment[$i];
+                $results[$attr]['series'][$i]['count'] += 1;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // calculate average for all series:
+    foreach ($results as $attr => $data) {
+      $sum = 0;
+      for ($i = 0; $i < count($data['series']); $i++) {
+        $results[$attr]['series'][$i] = $data['series'][$i]['sum'] / $data['series'][$i]['count'];
+        $sum += $results[$attr]['series'][$i];
+      }
+      $results[$attr]['avg'] = $sum / count($results[$attr]['series']);
+
+      if ($params['tail']) {
+        $results[$attr]['series'] = array_reverse($results[$attr]['series']);
+      }
+    }
+
+    return $results;
   }
 
   /**

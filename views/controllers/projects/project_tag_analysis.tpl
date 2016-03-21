@@ -9,42 +9,59 @@
   <section class="panel">
     <div class="panel-heading">
 	    <span class="lead">Projects | {$title}</span>
-      <select id="tester_id" style="float: right; min-width: 150px;" placeholder="Select Tester">
-        <option value=""></option>
-        {html_options options=$tester_opt selected=$tester_id}
-      </select>
       {include file='controllers/projects/tabs2.tpl'}
     </div>
     <div class="panel-body visualisation">
-      {if $tester_id}
-        <div class="row">
-          <div class="col-lg-12 col-md-12 col-sm-12">
-            <span style="font-size: 15px;">Tags</span>
-            <hr>
-            {if $tester_data.tags_file}
-              <div style="margin: 0 12px 0 80px; padding-top: 10px;">
-                <div id="tags" class="tags"></div>
-                <ul id="legend" class="list-unstyled list-inline legend"></ul>
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+          <!--
+          <span style="font-size: 15px;">Tags Selection</span>
+          <hr>
+          -->
+          <div class="clearfix">
+            <div id="testers" class="pull-left">
+              <b>Testers</b>
+              {foreach from=$tester_opt key=tester_id item=tester_name}
+              <label class="checkbox">
+                <input type="checkbox" value="{$tester_id}">
+                {$tester_name}
+              </label>
+              {/foreach}
+            </div>
+            <div id="tags" class="pull-left" style="margin-left: 30px;">
+              <b>Tags</b>
+              {foreach from=$tags key=tag item=data}
+              <div class="tag t-0 {$data.testers}" style="display: none;">
+                <label class="checkbox">
+                  <input type="checkbox">
+                  {$tag}
+                </label>
+                <div>
+                  {foreach from=$data.seq key=seq item=testers}
+                    <label class="checkbox-inline t-0 {$testers}" style="display: none;">
+                      <input type="checkbox" value="{$seq}" data-tag="{$tag}">
+                      {$seq}
+                    </label>
+                  {/foreach}
+                </div>
               </div>
-            {else}
-              There's no tags file uploaded for this tester, please upload one from the Data tab.
-            {/if}
+              {/foreach}
+            </div>
           </div>
+          <br>
+          <label class="checkbox">
+            <input type="checkbox" id="tail">
+            Use Tail (Right) Alignment
+          </label>
+          <button class="btn btn-danger" onclick="generate()">Generate</button>
+          <span id="loader" style="display: none;"><i class="fa fa-spinner fa-spin"></i> loading chart, please wait...</span>
         </div>
-        <div class="row">
-          <div class="col-lg-12 col-md-12 col-sm-12">
-            <span style="font-size: 15px;">Average of Index Data (for selected tag)</span>
-            <hr>
-            {if $tester_data.index_file}
-              <div id="charts" style="display: none;"></div>
-              <div id="loader" style="display: none; text-align: center;"><i class="fa fa-spinner fa-spin"></i> loading charts, please wait...</div>
-              <div id="no-tag-selected" style="text-align: center;">Please select a tag from above.</div>
-            {else}
-              There's no index file uploaded for this tester, please upload one from the Data tab.
-            {/if}
-          </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+          <div id="charts"></div>
         </div>
-      {/if}
+      </div>
     </div>
   </section>
 </section>
@@ -57,25 +74,93 @@
 <script type="text/javascript" src="{$BASE}/lib/flot/jquery.flot.selection.js"></script>
 <script type="text/javascript" src="{$BASE}/js/charts.js"></script>
 <script type="text/javascript">
-  var tags = {$tags_json};
-  var index_data = {$index_data_json};
+  var index_data;
   var index_attr = {$index_attr_json};
   var ma_attr = {$ma_attr_json};
   var url = "{href action='project-tag-analysis'}?id={$id}";
+  var displayChartsCalled = false;
   window.tagAnalysis = true;
 
   $(function() {
-    // initialise select2 controls:
-    $('#tester_id').select2({
-      minimumResultsForSearch: 10
+    $('#testers').on('click', 'input', function() {
+      var tester_ids = [];
+      $('#testers').find('input:checked').each(function() {
+        tester_ids.push($(this).val());
+      });
+
+      showTags(tester_ids);
     });
 
-    $('#tester_id').change(function() {
-      window.location.href = url + '&tester_id=' + $(this).val();
+    $('#tags').on('click', '.checkbox input', function(e) {
+      var $el = $(e.target);
+      $el.closest('.tag').find('.checkbox-inline input').prop('checked', $el.prop('checked'));
     });
 
-    displayTags();
-    displayCharts();
+    $('#tags').on('click', '.checkbox-inline input', function(e) {
+      var $el = $(e.target);
+      if (!$el.prop('checked')) {
+        $el.closest('.tag').find('.checkbox input').prop('checked', false);
+      }
+    });
   });
+
+  function showTags(tester_ids) {
+    var $tags = $('#tags');
+    $tags.find('.t-0').hide();
+    for (var i = 0; i < tester_ids.length; i++) {
+      $tags.find('.t-' + tester_ids[i]).show();
+    }
+  }
+
+  function generate() {
+    var data = {
+      testers: [],
+      tags: {},
+      tail: $('#tail').prop('checked')
+    };
+
+    $('#testers').find('input:checked').each(function() {
+      data.testers.push($(this).val());
+    });
+    
+    var notags = true;
+    $('#tags').find('.checkbox-inline input:visible').filter(':checked').each(function() {
+      var $el = $(this),
+          tag = $el.attr('data-tag'),
+          seq = $el.val();
+
+      if (!data.tags[tag]) {
+        data.tags[tag] = [];
+      }
+
+      data.tags[tag].push(seq);
+      notags = false;
+    });
+
+    if (notags) {
+      return;
+    }
+
+    $('#loader').show();
+
+    $.post(url, {
+      json: JSON.stringify(data)
+    },
+    function(json) {
+      $('#loader').hide();
+
+      if (json.ok) {
+        index_data = json.data;
+        
+        if (!displayChartsCalled) {
+          displayChartsCalled = true;
+          displayCharts();
+        }
+        else {
+          refreshCharts();
+        }
+      }
+    }, 'json');
+  }
 </script>
 {/block}
