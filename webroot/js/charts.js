@@ -377,8 +377,8 @@
         content: [
           '<form id="f', id, '" data-attr="', attr, '" data-axis="', i, '">',
           '<div class="row" style="margin-bottom: 5px;">',
-          '<div class="col-xs-6"><input name="min" type="text" value="', (i == 0 ? charts[attr].min : charts[attr].min2) || '', '" class="form-control" placeholder="Min"></div>',
-          '<div class="col-xs-6"><input name="max" type="text" value="', (i == 0 ? charts[attr].max : charts[attr].max2) || '', '" class="form-control" placeholder="Max"></div>',
+          '<div class="col-xs-6"><input name="min" type="text" value="', axis.min, '" class="form-control" placeholder="Min"></div>',
+          '<div class="col-xs-6"><input name="max" type="text" value="', axis.max, '" class="form-control" placeholder="Max"></div>',
           '</div>',
           '<a href="javascript: setAxisRange();" class="btn btn-danger btn-sm">Update</a>',
           '</form>'

@@ -49,10 +49,19 @@
             </div>
           </div>
           <br>
-          <label class="checkbox">
-            <input type="checkbox" id="tail">
-            Use Tail (Right) Alignment
-          </label>
+          <div>
+            <b>Data Alignment</b>
+            <br>
+            <label class="radio-inline" style="padding-left: 0;">
+              <input type="radio" name="tail" checked>
+              Head (Left)
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="tail" id="tail">
+              Tail (Right)
+            </label>
+          </div>
+          <br>
           <button class="btn btn-danger" onclick="generate()">Generate</button>
           <span id="loader" style="display: none;"><i class="fa fa-spinner fa-spin"></i> loading chart, please wait...</span>
         </div>
@@ -122,7 +131,7 @@
     $('#testers').find('input:checked').each(function() {
       data.testers.push($(this).val());
     });
-    
+
     var notags = true;
     $('#tags').find('.checkbox-inline input:visible').filter(':checked').each(function() {
       var $el = $(this),
