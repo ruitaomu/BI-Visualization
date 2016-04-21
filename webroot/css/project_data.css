@@ -49,13 +49,14 @@ div.data-widget div.placeholder {
 
 div.data-widget div.placeholder span {
   display: block;
+  margin-bottom: 5px;
 }
 
 div.data-widget div.file-control-video div.placeholder {
   position: absolute;
   top: 50%;
   width: 100%;
-  margin-top: -52px;
+  margin-top: -71px;
 }
 
 div.data-widget div.block {
@@ -136,4 +137,8 @@ div.data-widget:first-child div.panel-heading, div.data-widget:first-child div.p
 
 .fileinput-button.uploading input {
   z-index: -1;
+}
+
+.select-video {
+  z-index: 2;
 }

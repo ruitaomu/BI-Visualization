@@ -95,6 +95,18 @@
   function setupVideoUpload($el) {
     var url = uploadUrl;
 
+    $el.find('[name="existing_video_id"]').select2({
+      minimumResultsForSearch: 10,
+    }).on('change', function(e) {
+      var id = $(this).val();
+      saveVideoId(id);
+
+      var embed = '<iframe src="//fast.wistia.net/embed/iframe/' + id + '" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" allowfullscreen mozallowfullscreen webkitallowfullscreen oallowfullscreen msallowfullscreen width="100%" height="100%"></iframe>';
+
+      $el.addClass('has-video');
+      $el.find('.embed-responsive-item').append(embed);
+    });
+
     $el.find('.file-control-video input')
     .attr('data-url', url)
     .fileupload({
@@ -125,17 +137,7 @@
         var embed = '<iframe src="//fast.wistia.net/embed/iframe/' + id + '" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" allowfullscreen mozallowfullscreen webkitallowfullscreen oallowfullscreen msallowfullscreen width="100%" height="100%"></iframe>';
 
         // save the video id:
-        var $form = data.context.$el.find('form');
-        $.ajax({
-          url: $form.attr('data-action-set-video-hashed-id'),
-          method: 'post',
-          dataType: 'json',
-          data: {
-            ajax: 1,
-            tester_id: $form.attr('data-tester_id'),
-            video_hashed_id: id
-          }
-        });
+        saveVideoId(id);
 
         // wait for the video to be processed:
         data.context.$progresstext.text('processing: 0%');
@@ -174,6 +176,20 @@
         }
       }
     });
+
+    function saveVideoId(id) {
+      var $form = $el.find('form');
+      $.ajax({
+        url: $form.attr('data-action-set-video-hashed-id'),
+        method: 'post',
+        dataType: 'json',
+        data: {
+          ajax: 1,
+          tester_id: $form.attr('data-tester_id'),
+          video_hashed_id: id
+        }
+      });
+    }
   }
 
   function setupIndexUpload($el) {

@@ -36,6 +36,10 @@
               <div class="placeholder">
                 <i class="fa fa-video-camera fa-5x"></i>
                 <span>click to upload video</span>
+                <select name="existing_video_id" placeholder="or select already uploaded video" class="form-control select-video">
+                  <option value=""></option>
+                  {html_options options=$existing_video_id_opt}
+                </select>
               </div>
             </div>
             <div class="upload-progress"></div>

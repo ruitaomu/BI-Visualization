@@ -637,4 +637,30 @@ class project_model extends app_model {
 
     return $results;
   }
+
+  /**
+   * Get all videos already uploaded.
+   */
+  public static function existing_videos() {
+    $model = new self();
+    $results = array();
+
+    $tb = tb('project_tester');
+    $tb_project = tb('project');
+    $tb_tester = tb('tester');
+    $qstr = implode(' ', array(
+      "SELECT DISTINCT wistia_video_hashed_id, first_name, last_name, title",
+      "FROM $tb AS t1, $tb_project as t2, $tb_tester AS t3",
+      "WHERE t1.wistia_video_hashed_id != '' AND t2.id = t1.project_id",
+      "AND t3.id = t1.tester_id"
+    ));
+
+    $q = $model->query($qstr);
+    while (is_array($res = $q->getrow())) {
+      $name = "$res[title] / $res[first_name] $res[last_name]";
+      $results[$res['wistia_video_hashed_id']] = $name;
+    }
+
+    return $results;
+  }
 }

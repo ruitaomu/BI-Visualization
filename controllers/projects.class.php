@@ -140,6 +140,7 @@ class projects_controller extends front_controller {
       $this->set('index_cols', implode(', ', $index_data));
 
       $this->set('experience_id_opt', attribute_model::values('experience'));
+      $this->set('existing_video_id_opt', project_model::existing_videos());
 		}
   }
 
