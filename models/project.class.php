@@ -516,13 +516,26 @@ class project_model extends app_model {
       }
     }
 
+    $csv_headers = array();
+    $csv_data = array();
+
     // calculate average for all series:
     foreach ($results as $attr => $data) {
+      $csv_headers[] = $attr;
+
       $sum = 0;
       for ($i = 0; $i < count($data['series']); $i++) {
         $results[$attr]['counts'][$i] = $data['series'][$i]['count'];
         $results[$attr]['series'][$i] = $data['series'][$i]['sum'] / $data['series'][$i]['count'];
         $sum += $results[$attr]['series'][$i];
+
+        if ($params['csv']) {
+          if (!isset($csv_data[$i])) {
+            $csv_data[$i] = array();
+          }
+
+          $csv_data[$i][] = $results[$attr]['series'][$i];
+        }
       }
       $results[$attr]['avg'] = $sum / count($results[$attr]['series']);
 
@@ -532,7 +545,18 @@ class project_model extends app_model {
       }
     }
 
-    return $results;
+    if ($params['csv']) {
+      if ($params['tail']) {
+        $csv_data = array_reverse($csv_data);
+      }
+
+      array_unshift($csv_data, $csv_headers);
+
+      return $csv_data;
+    }
+    else {
+      return $results;
+    }
   }
 
   /**

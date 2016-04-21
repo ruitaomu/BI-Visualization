@@ -63,6 +63,7 @@
           </div>
           <br>
           <button class="btn btn-danger" onclick="generate()">Generate</button>
+          <button class="btn btn-primary" onclick="generate(true)">Download CSV</button>
           <span id="loader" style="display: none;"><i class="fa fa-spinner fa-spin"></i> loading chart, please wait...</span>
         </div>
       </div>
@@ -74,6 +75,9 @@
     </div>
   </section>
 </section>
+<form id="csv" action="{href action='project-tag-analysis'}?id={$id}" method="post">
+  <input type="hidden" name="json">
+</form>
 {/block}
 {block name='foot' append}
 <script type="text/javascript" src="{$BASE}/lib/select2/select2.js"></script>
@@ -121,7 +125,7 @@
     }
   }
 
-  function generate() {
+  function generate(csv) {
     var data = {
       testers: [],
       tags: {},
@@ -147,6 +151,16 @@
     });
 
     if (notags) {
+      return;
+    }
+
+    if (csv) {
+      data.csv = true;
+
+      var $form = $('#csv');
+      $form.find('[name="json"]').val(JSON.stringify(data));
+      $form.submit();
+
       return;
     }
 

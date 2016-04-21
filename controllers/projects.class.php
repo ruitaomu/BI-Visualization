@@ -213,7 +213,21 @@ class projects_controller extends front_controller {
 
         $index_data = $this->model->get_tag_analysis_data($params);
 
-			  return response::ajax_success($index_data);
+        if (isset($params['csv']) && $params['csv']) {
+          header('Content-Type: text/csv');
+          header('Content-Disposition: attachment; filename=data.csv');
+          header('Pragma: no-cache');
+          header('Expires: 0');
+
+          foreach ($index_data as $row) {
+            print implode(',', $row) . "\r\n";
+          }
+
+          return false;
+        }
+        else {
+          return response::ajax_success($index_data);
+        }
       }
 
       // get the list of testers for this project:
