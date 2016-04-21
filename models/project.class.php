@@ -496,7 +496,7 @@ class project_model extends app_model {
             }
 
             if (!isset($results[$attr])) {
-              $results[$attr] = array('series' => array());
+              $results[$attr] = array('series' => array(), 'counts' => array());
             }
 
             for ($i = 0; $i < count($segment); $i++) {
@@ -520,6 +520,7 @@ class project_model extends app_model {
     foreach ($results as $attr => $data) {
       $sum = 0;
       for ($i = 0; $i < count($data['series']); $i++) {
+        $results[$attr]['counts'][$i] = $data['series'][$i]['count'];
         $results[$attr]['series'][$i] = $data['series'][$i]['sum'] / $data['series'][$i]['count'];
         $sum += $results[$attr]['series'][$i];
       }
@@ -527,6 +528,7 @@ class project_model extends app_model {
 
       if ($params['tail']) {
         $results[$attr]['series'] = array_reverse($results[$attr]['series']);
+        $results[$attr]['counts'] = array_reverse($results[$attr]['counts']);
       }
     }
 

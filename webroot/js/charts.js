@@ -288,7 +288,17 @@
         },
         xaxis: {
           tickFormatter: function(val, axis) {
-            return sec2time(val * 400 / 1000);
+            if (window.tagAnalysis) {
+              if (index_data[charts[attr].attr].counts[val]) {
+                return sec2time(val * 400 / 1000) + '<br>' + index_data[charts[attr].attr].counts[val];
+              }
+              else {
+                return '';
+              }
+            }
+            else {
+              return sec2time(val * 400 / 1000);
+            }
           }
         },
         yaxes: [
