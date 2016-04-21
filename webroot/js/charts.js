@@ -581,8 +581,8 @@
       for (var j = 0; j < tags.tag[selTags[i]].length; j++) {
         var seq = tags.tag[selTags[i]][j];
         intervals.push({
-          s: Math.max(0, Math.min(Math.floor(seq.t_s / 400), index_data[attr].series.length - 1)),
-          e: Math.max(0, Math.min(Math.floor(seq.t_e / 400), index_data[attr].series.length - 1))
+          s: Math.max(0, Math.min(Math.floor(seq.t_s / 400) - 1, index_data[attr].series.length - 1)),
+          e: Math.max(0, Math.min(Math.floor(seq.t_e / 400) - 1, index_data[attr].series.length - 1))
         });
       }
     }

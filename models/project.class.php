@@ -488,8 +488,8 @@ class project_model extends app_model {
       foreach ($index_data as $attr => $data) {
         foreach ($tags['tag'] as $tag => $seqs) {
           foreach ($seqs as $seq) {
-            $start = max(0, min(floor($seq['t_s'] / 400), count($data['series']) - 1));
-            $end = max(0, min(floor($seq['t_e'] / 400), count($data['series']) - 1));
+            $start = max(0, min(floor($seq['t_s'] / 400) - 1, count($data['series']) - 1));
+            $end = max(0, min(floor($seq['t_e'] / 400) - 1, count($data['series']) - 1));
             $segment = array_slice($data['series'], $start, $end - $start + 1);
             if ($params['tail']) {
               $segment = array_reverse($segment);
