@@ -138,6 +138,8 @@ class projects_controller extends front_controller {
       $index_data = attribute_model::values('index_data');
       array_unshift($index_data, 'Time');
       $this->set('index_cols', implode(', ', $index_data));
+
+      $this->set('experience_id_opt', attribute_model::values('experience'));
 		}
   }
 

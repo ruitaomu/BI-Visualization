@@ -5,7 +5,12 @@
       <div class="panel-heading">
         <span class="tester-name">{if $t}{$t.name}{else}&nbsp;{/if}</span>
         <div class="tester-select">
-          <input type="hidden" name="tester_id" class="form-control" placeholder="Select Tester">
+          <div class="input-group select2-bootstrap-append">
+            <input type="hidden" name="tester_id" class="form-control" placeholder="Select Tester">
+            <span class="input-group-btn">
+              <a data-toggle="modal" href="#addTester" class="btn btn-primary">Add New</a>
+            </span>
+          </div>
         </div>
         <div class="delete">
           <div class="dropdown">
