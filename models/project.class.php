@@ -429,7 +429,7 @@ class project_model extends app_model {
       return null;
     }
 
-    $ext = 'xlsx';
+    $ext = pathinfo($info['index_file'], PATHINFO_EXTENSION);
     $path = $this->frwk->cfg['ROOT_DIR'] . "/data/index_files/$info[id].$ext";
     $objPHPExcel = PHPExcel_IOFactory::load($path);
     foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
