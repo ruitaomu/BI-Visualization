@@ -7,9 +7,9 @@
 // database connections:
 $CFG['DB'] = array(
 	'default' => array(
-		'name' => 'eegdashboard',
-		'user' => 'eegdashboard',
-		'pass' => 'eegdashboard',
+		'name' => 'eeg',
+		'user' => 'eeg',
+		'pass' => 'N7d.rg25!',
 		'host' => 'localhost',
 		'type' => 'mysql'
 	)

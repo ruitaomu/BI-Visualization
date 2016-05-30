@@ -7,10 +7,10 @@
 // Wistia settings:
 $CFG['WISTIA'] = array(
   // password used to access the API:
-  'pass' => '4c832d0b3f1533d5348f315bc98d40aed90a908f297abf2aa61e643f852d08a0',
+  'pass' => '2666bfaa87562cb513e0c00d746b393c7cf40efa738e43bc673b30fa19cb63d1',
 
   // where to upload videos:
-  'project_id' => '1qo2skbafj'
+  'project_id' => 'ahk4hfmjux'
 );
 
 $CFG['WISTIA']['upload_url'] = implode('', array(
@@ -49,8 +49,7 @@ $CFG['EMAIL'] = array(
 
 // Mandrill:
 $CFG['MANDRILL'] = array(
-  //TODO: change this for your account!
-  'key' => 'D5Mt3fq4BA04oJyYQ3IEmw'
+  'key' => 'your key here'
 );
 
 // SendGrid:
