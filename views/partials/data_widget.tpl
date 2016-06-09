@@ -53,7 +53,7 @@
               <i class="fa fa-paperclip fa-2x"></i>
               <span>upload index file</span>
             </div>
-            <a href="javascript:;" class="info" data-toggle="tooltip" data-placement="top" data-html="true" title="The file should be in CSV format with the following columns:<br>{$index_cols}"><i class="fa fa-info-circle"></i></a>
+            <a href="javascript:;" class="info" data-toggle="tooltip" data-placement="top" data-html="true" title="The file should be in XLSX format with the following columns:<br>{$index_cols}"><i class="fa fa-info-circle"></i></a>
           </div>
           <div class="uploaded placeholder">
             <a href="javascript:;" data-download="index">

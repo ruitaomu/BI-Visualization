@@ -38,7 +38,7 @@
 {block name='foot' append}
 <script type="text/javascript" src="{$BASE}/lib/datejs/date.js"></script>
 <script type="text/javascript">
-	var update_url = "{href action='update'}";
+	var update_url = "{href action='project-data'}";
   var filters = {$filters_json};
 	var dtcfg = {
 		't1': {
