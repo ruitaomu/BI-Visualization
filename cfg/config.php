@@ -35,9 +35,9 @@ $CFG['WISTIA']['delete_url'] = implode('', array(
 ////////////////////////////////////////////////////////////////////////////////
 
 $CFG['EMAIL'] = array(
-	'provider_name' => 'api_mandrill',
+	'provider_name' => 'api_smtp',
 
-	'from' => 'support@example.com',
+	'from' => 'test@brain-intelligence.cn',
 	'from_name' => 'EEG Dashboard',
 
 	'support_email' => 'support@example.com'
@@ -56,4 +56,13 @@ $CFG['MANDRILL'] = array(
 $CFG['SENDGRID'] = array(
 	'username' => '',
 	'password' => ''
+);
+
+// SMTP:
+$CFG['SMTP'] = array(
+  'host' => 'smtp.office365.com',
+  'port' => 587,
+  'user' => 'test@brain-intelligence.cn',
+  'pass' => 'Brain@20!6',
+  'secure' => 'tls'
 );

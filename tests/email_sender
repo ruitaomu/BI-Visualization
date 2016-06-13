@@ -1,0 +1,21 @@
+#!/usr/bin/env php
+<?php
+/**
+ * CLI Script
+ *
+ ******************************************************************************/
+require_once(dirname(__FILE__) . '/../cfg/bootstrap_cli.php');
+
+if (empty($argv[1])) {
+  die("Usage: $argv[0] <email address> [<provider name>]\n\n");
+}
+
+$provider_name = (isset($argv[2]) ? $argv[2] : null);
+
+$email_sender = new email_sender($provider_name);
+
+var_dump($email_sender->send(array(
+  'to' => $argv[1],
+  'subject' => 'Test Message',
+  'text' => 'Testing e-mail sender.'
+)));
