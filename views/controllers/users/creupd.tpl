@@ -1,5 +1,5 @@
 {extends 'layouts/front.tpl'}
-{block name='content'}
+{block name='content'} 
 <section class="wrapper">
   <section class="panel">
     <div class="panel-heading">
