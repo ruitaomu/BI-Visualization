@@ -196,13 +196,14 @@
 
           $el: $([
             '<div class="chart-container">',
-            '<label>', index_attr[i], '</label>',
+            '<label class="labs">', index_attr[i], '</label>',
             '<div class="chart"></div>',
             '<div class="row controls">',
             '<div class="col-lg-6" style="padding-left: 95px;">',
             '<input type="hidden" value="', attr, '" class="series" data-attr="', attr, '">',
             '<input type="hidden" class="ma" placeholder="Moving Average" data-attr="', attr, '">',
             (window.tagAnalysis ? '' : '<label class="checkbox-inline"><input type="checkbox" checked data-attr="' + attr + '"> Show average</label>'),
+            '<div class="boLine"><div class="boLineIn"></div></div><span class="boLineTxt">点击换播放线颜色</span>',
             '</div>',
             '<div class="col-lg-6" style="text-align: right; padding-right: 30px;">',
             '<input type="hidden" class="series" placeholder="Y2 Data" data-y2="true" data-attr="', attr, '">',
@@ -264,14 +265,13 @@
         }
       }
     }
-
+    colorBtn();
   }
 
   window.displayCharts = displayCharts;
 
-  function displayChart(attr) {
+  function displayChart(attr,colors1,colors2,lineColor) {
     var series = [];
-
     var label = getAttrLabel(charts[attr].attr);
     if (charts[attr].attr2) {
       label += ' vs. ' + getAttrLabel(charts[attr].attr2);
@@ -279,9 +279,17 @@
     charts[attr].$el.children('label').text(label);
 
     var $chart = charts[attr].$el.find('.chart');
-
+    var changeLineColor='';
+    if(!lineColor)
+    {
+      changeLineColor='#a23c3c';
+    }  
+    else
+    {
+      changeLineColor=lineColor;
+    }
     var plot = charts[attr].plot = $.plot($chart,
-      getSeries(attr),
+      getSeries(attr,colors1,colors2),
       {
         series: {
           shadowSize: 0
@@ -318,11 +326,12 @@
           mode: 'x'
         },
         crosshair: {
-          mode: 'x'
+          mode: 'x',
+          color:changeLineColor
         },
-	      legend: {
-	        show: true,
-	        noColumns: 6 
+        legend: {
+          show: true,
+          noColumns: 6 
         },
         grid: {
           clickable: true,
@@ -373,7 +382,7 @@
         top: box.top + 'px',
         width: box.width + 'px',
         height: box.height + 'px',
-        'background-color': '#f00',
+        'background-color': '#f00', //侧边移入移出的背景颜色的变化
         opacity: 0,
         cursor: 'pointer'
       }).hover(
@@ -400,6 +409,7 @@
     });
 
     crosshair();
+    colorBtn();
   }
 
   window.setAxisRange = function() {
@@ -505,10 +515,17 @@
     }
   }
 
-  function getSeries(attr) {
+  function getSeries(attr,colors1,colors2) {
     if (typeof(charts[attr].color) == 'undefined') {
-      charts[attr].color = nextColor;
+      charts[attr].color = nextColor;   //颜色控制，是flot图的背景颜色
       nextColor += 2;
+    }
+    else
+    {
+      if(colors1)
+      {
+        charts[attr].color = colors1;   //颜色控制，是flot图的背景颜色
+      }
     }
 
     var series = [];
@@ -523,9 +540,18 @@
 
     if (charts[attr].avg) {
       var avg = index_data[charts[attr].attr].avg;
+      var changeColor='';
+      if(colors2)
+      {
+        changeColor=colors2;
+      }
+      else
+      {
+        changeColor=2;
+      }
       series.push({
         label: '&nbsp;' + getAttrLabel(charts[attr].attr) + ' Avg&nbsp;&nbsp;&nbsp;',
-        color: 2,
+        color: changeColor, //中间那条线的颜色
         data: [[0, avg], [index_data[charts[attr].attr].series.length, avg]]
       });
     }
@@ -534,7 +560,7 @@
     if (charts[attr].ma) {
       series.push({
         label: '&nbsp;' + getAttrLabel(charts[attr].attr) + ' MA-' + charts[attr].ma + '&nbsp;&nbsp;&nbsp;',
-        color: 1,
+        color: 2, //会在中间出现波浪线，而且改变颜色的话会发生颜色变化
         data: getMAData(charts[attr].attr, charts[attr].ma)
       });
     }
@@ -553,7 +579,7 @@
       if (charts[attr].avg2) {
         var avg = index_data[charts[attr].attr2].avg;
         series.push({
-	        label: '&nbsp;' + getAttrLabel(charts[attr].attr2) + ' Avg&nbsp;&nbsp;&nbsp;',
+          label: '&nbsp;' + getAttrLabel(charts[attr].attr2) + ' Avg&nbsp;&nbsp;&nbsp;',
           color: 3,
           data: [[0, avg], [index_data[charts[attr].attr2].series.length, avg]],
           yaxis: 2
@@ -563,7 +589,7 @@
       // moving average:
       if (charts[attr].ma2) {
         series.push({
-	  label: '&nbsp;' + getAttrLabel(charts[attr].attr2) + ' MA-' + charts[attr].ma2 + '&nbsp;&nbsp;&nbsp;',
+    label: '&nbsp;' + getAttrLabel(charts[attr].attr2) + ' MA-' + charts[attr].ma2 + '&nbsp;&nbsp;&nbsp;',
           color: 4,
           data: getMAData(charts[attr].attr2, charts[attr].ma2),
           yaxis: 2
@@ -751,5 +777,217 @@
 
     var pos = window.player.duration() * prc / 100;
     window.player.time(pos);
+  }
+  //十六进制颜色值的正则表达式  
+  var reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
+  /*RGB颜色转换为16进制*/
+  String.prototype.colorHex = function(){
+   var that = this;
+   if(/^(rgb|RGB)/.test(that)){
+        var aColor = that.replace(/(?:\(|\)|rgb|RGB)*/g,"").split(",");
+        var strHex = "#";
+        for(var i=0; i<aColor.length; i++){
+             var hex = Number(aColor[i]).toString(16);
+             if(hex === "0"){
+                  hex += hex;    
+             }
+             strHex += hex;
+        }
+        if(strHex.length !== 7){
+             strHex = that;    
+        }
+        return strHex;
+   }else if(reg.test(that)){
+        var aNum = that.replace(/#/,"").split("");
+        if(aNum.length === 6){
+             return that;    
+        }else if(aNum.length === 3){
+             var numHex = "#";
+             for(var i=0; i<aNum.length; i+=1){
+                  numHex += (aNum[i]+aNum[i]);
+             }
+             return numHex;
+        }
+   }else{
+        return that;    
+   }
+  };
+  //通过点击改变颜色
+  function colorBtn()
+  {
+    $('.legendColorBox').off('click');
+    $('.legendColorBox').on('click',function (index){
+      var target=this;
+      var colorArr=[];
+      var index=$(target).index();
+      var legendSib=$('<div class=".legendSib"></div>');
+      legendSib.insertBefore($(target));
+      $.fn.jPicker.defaults.images.clientPath='../../img/';
+      var colors=$(target).children().children().css('border-color'); //rgb(150, 60, 99);
+      colors = colors.colorHex();
+        $(legendSib).jPicker(  
+          {  
+            window:  
+            {  
+                position:  
+                {  
+                  x: 'screenCenter',
+                   /* acceptable values "left", "center", "right", "screenCenter", or relative px value */  
+                  y: 'bottom' 
+                  /* acceptable values "top", "bottom", "center", or relative px value */  
+                }  
+              // expandable: false  
+            },
+            "color":{
+          active: new $.jPicker.Color({ hex: colors })
+        },  
+
+            // images:  
+            // {  
+            //   //clientPath: '/'+document.location.pathname.split("/")[1]+'/commons/jpicker-1.1.6/images/', /* Path to image files */  
+            //   clientPath: 'images/', 
+            //   /* Path to image files */  
+            // },  
+            localization: /* alter these to change the text presented by the picker (e.g. different language) */  
+            {  
+              text:  
+              {  
+                title: '拖动鼠标选中一个颜色',  
+                newColor: '选中颜色',  
+                currentColor: '当前颜色',  
+                ok: '确定',  
+                cancel: '取消'  
+              },  
+              tooltips:  
+              {  
+                colors:  
+                {  
+                  newColor: '点击‘确定’提交新选颜色',  
+                  currentColor: '点击这里还原当前颜色'  
+                },  
+                buttons:  
+                {  
+                  ok: '提交新选颜色',  
+                  cancel: '取消并恢复当前颜色'  
+                }  
+              }  
+            }
+          },
+          function (color, context){
+            var all = color.val('all');
+            var colors=(all && '#' + all.hex || 'transparent');
+              $('.jPicker').hide();
+              $(target).children().children().css(
+              {
+                borderColor: colors
+              });
+              var colors1=$(target).parents('.chart-container').find('.legendColorBox').eq(0).children().children().css('border-color');
+              colors1 = colors1.colorHex();
+              var colors2=$(target).parents('.chart-container').find('.legendColorBox').eq(1).children().children().css('border-color');
+              colors2 = colors2.colorHex();
+              var changeLineColor=$(target).parents('.chart-container').find('.boLineIn').css('border-color');
+              changeLineColor = changeLineColor.colorHex();
+              var attrs=$(target).parents('.chart-container').find('.labs').text().toLowerCase(); 
+              console.log(attrs,colors1,colors2,changeLineColor+'///111');
+              displayChart(attrs,colors1,colors2,changeLineColor);
+            },
+            function (color, context){
+              var hex = color.val('hex');
+              $(target).children().children().css(
+              {
+                borderColor: hex && '#' + hex || 'transparent'
+              });
+            },
+            function (color, context){
+              $('.jPicker').hide();
+            }
+          ); 
+      });
+    $('.boLine').off('click');
+    $('.boLine').on('click',function (index){
+      var target=this;
+      var index=$(target).index();
+      var legendSib=$('<div class=".legSib"></div>');
+      legendSib.insertBefore($(target));
+      $.fn.jPicker.defaults.images.clientPath='../../img/';
+      var changeColors=$(target).children().css('border-color').colorHex();
+        $(legendSib).jPicker(  
+          {  
+            window:  
+            {  
+                position:  
+                {  
+                  x: 'left',
+                   /* acceptable values "left", "center", "right", "screenCenter", or relative px value */  
+                  y: 'bottom' 
+                  /* acceptable values "top", "bottom", "center", or relative px value */  
+                }  
+              // expandable: false  
+            },
+            "color":{
+          active: new $.jPicker.Color({ hex: changeColors })
+        },  
+
+            // images:  
+            // {  
+            //   //clientPath: '/'+document.location.pathname.split("/")[1]+'/commons/jpicker-1.1.6/images/', /* Path to image files */  
+            //   clientPath: 'images/', 
+            //   /* Path to image files */  
+            // },  
+            localization: /* alter these to change the text presented by the picker (e.g. different language) */  
+            {  
+              text:  
+              {  
+                title: '拖动鼠标选中一个颜色',  
+                newColor: '选中颜色',  
+                currentColor: '当前颜色',  
+                ok: '确定',  
+                cancel: '取消'  
+              },  
+              tooltips:  
+              {  
+                colors:  
+                {  
+                  newColor: '点击‘确定’提交新选颜色',  
+                  currentColor: '点击这里还原当前颜色'  
+                },  
+                buttons:  
+                {  
+                  ok: '提交新选颜色',  
+                  cancel: '取消并恢复当前颜色'  
+                }  
+              }  
+            }
+          },
+          function (color, context){
+            var all = color.val('all');
+            var colors=(all && '#' + all.hex || 'transparent');
+              $(target).children().css(
+              {
+                borderColor: colors
+              });
+              $('.jPicker').hide();
+              var colors1=$(target).parents('.chart-container').find('.legendColorBox').eq(0).children().children().css('border-color');
+              colors1 = colors1.colorHex();
+              var colors2=$(target).parents('.chart-container').find('.legendColorBox').eq(1).children().children().css('border-color');
+              colors2 = colors2.colorHex();
+              var attrs=$(target).parents('.chart-container').find('.labs').text().toLowerCase();               
+              setTimeout(function (){
+                console.log(attrs,colors1,colors2,colors+'222');
+                displayChart(attrs,colors1,colors2,colors);
+              },30);
+            },
+            function (color, context){
+              var hex = color.val('hex');
+              $(target).children().css(
+              {
+                borderColor: hex && '#' + hex || 'transparent'
+              });
+            },
+            function (color, context){
+              $('.jPicker').hide();
+            }
+          ); 
+      });
   }
 })();

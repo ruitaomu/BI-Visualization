@@ -1,7 +1,30 @@
 {extends 'layouts/front.tpl'}
 {block name='head' append}
 <link type="text/css" href="{$BASE}/lib/select2/select2.css" rel="stylesheet">
+<link type="text/css" href="{$BASE}/lib/jpicker-1.1.6/jPicker-1.1.6.min.css" rel="stylesheet">
 <link type="text/css" href="{$BASE}/lib/select2-bootstrap/select2-bootstrap.css" rel="stylesheet">
+<liberal>
+<style>
+  .row .boLine{
+    display:inline-block;
+    border: 1px solid #ccc;
+    padding: 1px;
+    display: inline-block;
+    margin-left: 20px;
+  }
+.row .boLine .boLineIn{
+    width: 4px;
+    height: 0;
+    border: 5px solid #a23c3c;
+    overflow: hidden;
+  }
+.row .boLineTxt{
+    display:inline-block;
+    vertical-align: middle;
+    margin-left:5px;
+  }
+</style>
+</liberal>
 {/block}
 {block name='content'}
 <section class="wrapper">
@@ -68,12 +91,18 @@
 <script type="text/javascript" src="{$BASE}/lib/flot/jquery.flot.resize.js"></script>
 <script type="text/javascript" src="{$BASE}/lib/flot/jquery.flot.crosshair.js"></script>
 <script type="text/javascript" src="{$BASE}/lib/flot/jquery.flot.selection.js"></script>
+<script type="text/javascript" src="{$BASE}/lib/jpicker-1.1.6/jpicker-1.1.6.min.js"></script>
 <script type="text/javascript" src="{$BASE}/js/charts.js"></script>
 <script type="text/javascript">
   var tags = {$tags_json};
   var index_data = {$index_data_json};
   var index_attr = {$index_attr_json};
   var ma_attr = {$ma_attr_json};
+
+  // var tags = {"tag":'[]'};
+  // var index_data=
+  // var index_attr = ["Emo.I","EmoI","SCL","High Alpha","Gamma"];
+  //   var ma_attr = [{"id":"10","text":"10"},{"id":"20","text":"20"},{"id":"50","text":"50"}];
   var url = "{href action='project-data-visualisation'}?id={$id}";
 
   $(function() {

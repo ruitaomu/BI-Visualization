@@ -227,3 +227,6 @@ ul.dropdown-menu li.divider:first-child {
 .axis-selected {
   opacity: 0.10 !important;
 }
+.jPicker .Grid{
+  background-image:none!important;
+}
